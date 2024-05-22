@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.MainController">
+   <left>
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="900.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="stocksVBox" alignment="TOP_CENTER" prefHeight="398.0" prefWidth="200.0">
+               <children>
+                  <TextField fx:id="searchTextField" onKeyTyped="#typingIntoSearchTextField" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </left>
+   <center>
+      <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="nothingToDisplayLabel" text="Choose stock to display chart" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
