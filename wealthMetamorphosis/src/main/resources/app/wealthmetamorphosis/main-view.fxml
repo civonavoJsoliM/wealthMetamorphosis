@@ -21,6 +21,30 @@
          </content>
       </ScrollPane>
    </left>
+   <right>
+      <VBox prefHeight="900.0" prefWidth="217.0" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="stockLabel" text="Stock">
+               <font>
+                  <Font size="51.0" />
+               </font>
+            </Label>
+            <Label fx:id="priceLabel" text="Price" />
+            <HBox prefHeight="49.0" prefWidth="217.0">
+               <children>
+                  <Label text="Amount" />
+                  <TextField fx:id="amountTextField" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="45.0" prefWidth="217.0" spacing="30.0">
+               <children>
+                  <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyClicked" text="Buy" />
+                  <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#onSellClicked" text="Sell" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </right>
    <center>
       <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" BorderPane.alignment="CENTER">
          <children>
