@@ -3,9 +3,12 @@ package app.wealthmetamorphosis.data;
 import java.util.List;
 
 public class Stock {
-    public Meta meta;
-    public List<Value> values;
-    public String status;
+    private Meta meta;
+    private List<Value> values;
+    private String status;
+
+    public Stock() {
+    }
 
     public Meta getMeta() {
         return meta;

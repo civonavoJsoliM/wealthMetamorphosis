@@ -1,13 +1,16 @@
 package app.wealthmetamorphosis.data;
 
 public class Meta {
-    public String symbol;
-    public String interval;
-    public String currency;
-    public String exchange_timezone;
-    public String exchange;
-    public String mic_code;
-    public String type;
+    private String symbol;
+    private String interval;
+    private String currency;
+    private String exchange_timezone;
+    private String exchange;
+    private String mic_code;
+    private String type;
+
+    public Meta() {
+    }
 
     public String getSymbol() {
         return symbol;

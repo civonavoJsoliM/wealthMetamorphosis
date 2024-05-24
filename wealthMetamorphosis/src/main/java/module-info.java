@@ -4,6 +4,7 @@ module app.wealthmetamorphosis {
     requires java.net.http;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
+    requires org.json;
 
 
     opens app.wealthmetamorphosis to javafx.fxml;

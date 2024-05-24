@@ -1,12 +1,15 @@
 package app.wealthmetamorphosis.data;
 
 public class Value {
-    public String datetime;
-    public String open;
-    public String high;
-    public String low;
-    public String close;
-    public String volume;
+    private String datetime;
+    private String open;
+    private String high;
+    private String low;
+    private String close;
+    private String volume;
+
+    public Value() {
+    }
 
     public String getDatetime() {
         return datetime;
