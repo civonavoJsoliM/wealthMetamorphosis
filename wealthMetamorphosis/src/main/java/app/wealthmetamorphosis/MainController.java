@@ -76,6 +76,7 @@ public class MainController {
     RealTimeStockPriceRefresher realTimeStockPriceRefresher;
     ScheduledExecutorService chartSchedule;
     RealTimeChartRefresher realTimeChartRefresher;
+    Label chartDataLabel;
 
 
     @FXML
@@ -99,6 +100,9 @@ public class MainController {
         chartSchedule = Executors.newScheduledThreadPool(1);
         ObjectMapper objectMapper = new ObjectMapper();
         realTimeChartRefresher = new RealTimeChartRefresher(httpService, chart, objectMapper);
+
+        // Label to display Chart Data
+        chartDataLabel = new Label();
     }
 
     @FXML
@@ -160,9 +164,14 @@ public class MainController {
         // create StackPane
         StackPane stackPane = getStackPane(chart, pane);
 
+
+        // create HBox to display Chart Data
+        HBox chartDataHBox = new HBox(chartDataLabel);
+        chartDataHBox.setAlignment(Pos.TOP_CENTER);
+
         // create VBox
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(hBox, stackPane);
+        vBox.getChildren().addAll(hBox, chartDataHBox, stackPane);
 
         // move to css file
         vBox.setStyle("-fx-background-color: transparent");
@@ -236,6 +245,7 @@ public class MainController {
                             // set circle center coordinates
                             circle.setCenterX(event.getX());
                             circle.setCenterY(yPos);
+                            chartDataLabel.setText(data.getXValue() + " " + data.getYValue());
                         }
                     }
                 }
