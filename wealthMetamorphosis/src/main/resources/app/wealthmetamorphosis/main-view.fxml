@@ -24,6 +24,7 @@
    <right>
       <VBox prefHeight="900.0" prefWidth="217.0" spacing="30.0" BorderPane.alignment="CENTER">
          <children>
+            <Button mnemonicParsing="false" onMouseClicked="#onProfileClicked" text="Profile" />
             <Label fx:id="stockLabel" text="Stock">
                <font>
                   <Font size="51.0" />
@@ -32,16 +33,16 @@
             <Label fx:id="priceLabel" text="Price" />
             <HBox prefHeight="49.0" prefWidth="217.0">
                <children>
-                  <Label text="Amount" />
-                  <TextField fx:id="amountTextField" />
+                  <Label text="Shares" />
+                  <TextField fx:id="sharesTextField" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="217.0" spacing="30.0">
                <children>
-                  <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyClicked" text="Buy" />
-                  <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#onSellClicked" text="Sell" />
+                  <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyClicked" prefHeight="27.0" prefWidth="216.0" text="Buy" />
                </children>
             </HBox>
+            <ScrollPane prefHeight="542.0" prefWidth="217.0" />
          </children>
       </VBox>
    </right>

@@ -1,11 +1,17 @@
 package app.wealthmetamorphosis.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javafx.scene.control.Button;
+
 import java.util.List;
 
+@JsonIgnoreProperties({"button"})
 public class Stock {
+    private String symbol;
     private Meta meta;
     private List<Value> values;
     private String status;
+    private Button button;
 
     public Stock() {
     }
@@ -32,5 +38,21 @@ public class Stock {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Button getButton() {
+        return button;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public void setButton(Button button) {
+        this.button = button;
     }
 }

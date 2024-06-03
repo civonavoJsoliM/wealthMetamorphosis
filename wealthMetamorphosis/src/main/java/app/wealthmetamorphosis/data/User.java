@@ -1,24 +1,28 @@
 package app.wealthmetamorphosis.data;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
-public class Account {
-    private String user;
+public class User {
+    private String userId;
+    private String userName;
+    private String password;
+    private LocalDateTime registered;
     private double balance;
     private List<Order> orders;
-    private Map<String, Double> portfolio;
 
-    public Account() {}
-
-    public Account(String user, double balance, Map<String, Double> portfolio) {
-        this.user = user;
-        this.balance = balance;
-        this.portfolio = portfolio;
+    public User() {
     }
 
-    public String getUser() {
-        return user;
+    public User(String userId, String userName, String password, LocalDateTime registered) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.registered = registered;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public double getBalance() {
@@ -29,19 +33,23 @@ public class Account {
         this.balance = balance;
     }
 
-    public Map<String, Double> getPortfolio() {
-        return portfolio;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPortfolio(Map<String, Double> portfolio) {
-        this.portfolio = portfolio;
+    public String getPassword() {
+        return password;
     }
 
-    public void setTransactions(List<Order> orders) {
-        this.orders = orders;
+    public LocalDateTime getRegistered() {
+        return registered;
     }
 
-    public List<Order> getTransactions() {
+    public List<Order> getOrders() {
         return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

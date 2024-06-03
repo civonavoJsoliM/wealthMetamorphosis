@@ -16,7 +16,7 @@ public class HttpService {
         this.counter = counter;
     }
 
-    public HttpResponse<String> getHttpResponse(String symbol) throws IOException, InterruptedException {
+    public HttpResponse<String> getRealTimeStockPrice(String symbol) throws IOException, InterruptedException {
         counter++;
         List<String> apiKeys = getApiKeys();
         HttpRequest request = HttpRequest.newBuilder()
@@ -28,7 +28,7 @@ public class HttpService {
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> getHttpResponse(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
+    public HttpResponse<String> getStock(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
         counter++;
         List<String> apiKeys = getApiKeys();
         HttpRequest request = HttpRequest.newBuilder()
