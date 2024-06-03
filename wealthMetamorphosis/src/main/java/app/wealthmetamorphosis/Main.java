@@ -20,6 +20,10 @@ public class Main extends Application {
         controller.setStage(primaryStage);
         primaryStage.setScene(scene);
         primaryStage.show();
+        closeAllThreads(primaryStage);
+    }
+
+    private static void closeAllThreads(Stage primaryStage) {
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent e) {

@@ -1,0 +1,44 @@
+.borderPane {
+        -fx-background-color: linear-gradient(to bottom left, #212324, #5a6064);
+}
+.scroll-pane > .viewport {
+        -fx-background-color: transparent;
+}
+.scroll-pane {
+        -fx-background-color: transparent;
+}
+.vBox {
+    -fx-border-width: 0 2px 0 0;
+    -fx-border-color: white;
+    -fx-border-style: solid;
+}
+#stocksVBoxLabel {
+        -fx-text-fill: white;
+        -fx-font-family: Copperplate;
+        -fx-font-size: 17px;
+        -fx-pref-width: 75;
+}
+#ordersVBoxLabel {
+        -fx-text-fill: white;
+        -fx-font-family: Copperplate;
+        -fx-font-size: 17px;
+}
+#pieChart {
+        -fx-border-color: transparent;
+}
+#pieChart .chart-legend {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+}
+#pieChart .chart-legend-item {
+        -fx-text-fill: white;
+}
+.scroll-bar:horizontal, .scroll-bar:vertical {
+        -fx-background-color: transparent;
+}
+.scroll-pane > .corner {
+        -fx-background-color: transparent;
+}
+#stocksVBox:even {
+        -fx-background-color: white;
+}

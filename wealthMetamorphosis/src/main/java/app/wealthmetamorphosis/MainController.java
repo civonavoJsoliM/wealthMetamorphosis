@@ -1,14 +1,18 @@
 package app.wealthmetamorphosis;
 
-import app.wealthmetamorphosis.data.Account;
-import app.wealthmetamorphosis.data.Stock;
+import app.wealthmetamorphosis.data.*;
 import app.wealthmetamorphosis.logic.*;
+import app.wealthmetamorphosis.logic.db.DBInserter;
+import app.wealthmetamorphosis.logic.db.DBReader;
+import app.wealthmetamorphosis.logic.db.ResultSetToList;
 import app.wealthmetamorphosis.logic.refresher.RealTimeChartRefresher;
 import app.wealthmetamorphosis.logic.refresher.RealTimeStockPriceRefresher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -24,12 +28,12 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +61,7 @@ public class MainController {
     @FXML
     private Label priceLabel;
     @FXML
-    private TextField amountTextField;
+    private TextField sharesTextField;
     @FXML
     private Button buyButton;
     @FXML
@@ -65,38 +69,80 @@ public class MainController {
 
     private Stage stage;
     private List<String> stockSymbols;
+    private List<Stock> stocks;
     private int counter;
-    private Account account;
+    private User user;
     private TradingService tradingService;
     private Checker checker;
     private HttpService httpService;
     private FileReader fileReader;
     private AreaChart<String, Number> chart;
-    ScheduledExecutorService stockPriceScheduler;
-    RealTimeStockPriceRefresher realTimeStockPriceRefresher;
-    ScheduledExecutorService chartSchedule;
-    RealTimeChartRefresher realTimeChartRefresher;
-    Label chartDataLabel;
+    private ScheduledExecutorService stockPriceScheduler;
+    private RealTimeStockPriceRefresher realTimeStockPriceRefresher;
+    private ScheduledExecutorService chartSchedule;
+    private RealTimeChartRefresher realTimeChartRefresher;
+    private Label chartDataLabel;
 
 
     @FXML
     void initialize() {
+        stocks = new ArrayList<>();
         setUpChart();
         counter = 0;
         fileReader = new FileReader();
         httpService = new HttpService(fileReader, counter);
-        account = new Account("Max", 1000, new HashMap<>());
+
+        DBConnection dbConnection = new DBConnection("jdbc:mysql://localhost/wealthMetamorphosis", "root", "password");
+        ResultSetToList<Order> rstl = new OrderService();
+        DBReader<Order> reader = new DBReader<>(rstl, dbConnection);
+        List<Order> orders = reader.readFromDB("SELECT * FROM orders WHERE user_id = '7143a7c0-8d85-418e-a1d8-b2d98c9e1b25' " +
+                "ORDER BY order_timeStamp");
+        ResultSetToList<User> rstlUser = new UserService();
+        DBReader<User> readerUser = new DBReader<>(rstlUser, dbConnection);
+        List<User> users = readerUser.readFromDB("SELECT * FROM users");
+        Optional<User> optionalUser = users.stream().filter(us -> us.getUserId().equals("7143a7c0-8d85-418e-a1d8-b2d98c9e1b25")).findFirst();
+        optionalUser.ifPresent(value -> user = value);
+        user.setOrders(orders);
+        UserSingleton.setUser(user);
+
+        DBInserter inserter = new DBInserter(dbConnection);
         checker = new Checker();
-        tradingService = new TradingService(checker, account, priceLabel, stockLabel, amountTextField);
+        tradingService = new TradingService(checker, user, priceLabel, stockLabel, sharesTextField);
         stockSymbols = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/StockSymbols.txt");
-        addRelevantStocks(stockSymbols);
+        stockSymbols.forEach(stockSymbol -> {
+            stocks.add(new Stock());
+            stocks.getLast().setSymbol(stockSymbol);
+            stocks.getLast().setButton(new Button());
+            stocks.getLast().getButton().setText(stockSymbol);
+            stocks.getLast().getButton().setPrefWidth(stocksVBox.getPrefWidth());
+            stocks.getLast().getButton().setOnMouseClicked(event -> {
+                stockLabel.setText(stockSymbol);
+                removePlaceholderLabel();
+                if (chartsVBox.getChildren().isEmpty()) {
+                    VBox vBoxChartWindow = getChartWindowVBox(chart);
+                    chartsVBox.getChildren().add(vBoxChartWindow);
+                } else {
+                    chart.getData().clear();
+                }
+                try {
+                    XYChart.Series<String, Number> series = getChartSeries(stockSymbol, "1min", "390");
+                    chart.getData().add(series);
+                    refreshStockPrice();
+                    refreshChart(stockSymbol, "1min", "390");
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        });
+        stocks.forEach(stock -> stocksVBox.getChildren().add(stock.getButton()));
 
         // move to CSS file
-        stocksVBox.setAlignment(Pos.CENTER);
+        stocksVBox.setAlignment(Pos.TOP_CENTER);
 
         stockPriceScheduler = Executors.newScheduledThreadPool(1);
         JSONObject jsonObject = new JSONObject();
-        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(httpService, priceLabel, jsonObject);
+        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(httpService, jsonObject);
+        realTimeStockPriceRefresher.setLabel(priceLabel);
         chartSchedule = Executors.newScheduledThreadPool(1);
         ObjectMapper objectMapper = new ObjectMapper();
         realTimeChartRefresher = new RealTimeChartRefresher(httpService, chart, objectMapper);
@@ -106,29 +152,38 @@ public class MainController {
     }
 
     @FXML
+    void onProfileClicked() throws IOException {
+        Stage profileStage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("profile-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        ProfileController controller = fxmlLoader.getController();
+        controller.getProfileStage().setScene(scene);
+        //profileStage.setScene(scene);
+        controller.getProfileStage().show();
+    }
+
+    @FXML
     void typingIntoSearchTextField() {
         String searchItem = searchTextField.getText();
         removeIrrelevantStocks();
         if (!searchItem.isBlank()) {
-            List<String> relevantStockSymbols = getRelevantStockSymbols(searchItem);
-            addRelevantStocks(relevantStockSymbols);
+            stocks.stream().filter(stock -> stock.getSymbol().contains(searchItem.toUpperCase())).forEach(stock -> stocksVBox.getChildren().add(stock.getButton()));
         } else {
-            addRelevantStocks(stockSymbols);
+            stocks.forEach(stock -> stocksVBox.getChildren().add(stock.getButton()));
+        }
+    }
+
+    private void removeIrrelevantStocks() {
+        while (stocksVBox.getChildren().size() != 1) {
+            stocksVBox.getChildren().remove(stocksVBox.getChildren().size() - 1);
         }
     }
 
     @FXML
     void onBuyClicked() {
-        tradingService.buyOrder();
-        System.out.println(account.getBalance());
-        account.getPortfolio().forEach((str, dou) -> System.out.println(str + " " + dou));
-    }
-
-    @FXML
-    void onSellClicked() {
-        tradingService.sellOrder();
-        System.out.println(account.getBalance());
-        account.getPortfolio().forEach((str, dou) -> System.out.println(str + " " + dou));
+        tradingService.placeOrder(OrderType.BUY);
+        Optional<Stock> stock = stocks.stream().filter(stk -> stk.getSymbol().equals(stockLabel.getText())).findFirst();
+        stock.ifPresent(value -> value.getButton().setStyle("-fx-background-color: green"));
     }
 
     private XYChart.Series<String, Number> getChartSeries(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
@@ -143,7 +198,7 @@ public class MainController {
     }
 
     private Stock getStock(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
-        HttpResponse<String> response = httpService.getHttpResponse(symbol, interval, outputSize);
+        HttpResponse<String> response = httpService.getStock(symbol, interval, outputSize);
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(response.body(), Stock.class);
     }
@@ -187,9 +242,9 @@ public class MainController {
 
         List<String> timeIntervalsData = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TimeIntervals.txt");
         for (String timeInterval : timeIntervalsData) {
-            Button tmIntButton = new Button();
-            tmIntButton.setText(timeInterval.split(" ")[0]);
-            tmIntButton.setOnMouseClicked(event -> {
+            Button timeIntervalButton = new Button();
+            timeIntervalButton.setText(timeInterval.split(" ")[0]);
+            timeIntervalButton.setOnMouseClicked(event -> {
                 String outputSize = getOutputSize(timeInterval);
                 try {
                     XYChart.Series<String, Number> series = getChartSeries(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
@@ -203,7 +258,7 @@ public class MainController {
                     throw new RuntimeException(e);
                 }
             });
-            hBox.getChildren().add(tmIntButton);
+            hBox.getChildren().add(timeIntervalButton);
         }
         return hBox;
     }
@@ -271,42 +326,6 @@ public class MainController {
         return line;
     }
 
-    private List<String> getRelevantStockSymbols(String searchItem) {
-        return stockSymbols.stream().filter(symbol -> symbol.contains(searchItem.toUpperCase())).toList();
-    }
-
-    private void addRelevantStocks(List<String> stockSymbols) {
-        /*stockPriceScheduler = Executors.newScheduledThreadPool(1);
-        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(httpService, priceLabel);
-        chartSchedule = Executors.newScheduledThreadPool(1);
-        realTimeChartRefresher = new RealTimeChartRefresher(httpService, chart); */
-
-        for (String stockSymbol : stockSymbols) {
-            Button button = new Button();
-            button.setText(stockSymbol);
-            button.setPrefWidth(stocksVBox.getPrefWidth());
-            button.setOnMouseClicked(event -> {
-                stockLabel.setText(stockSymbol);
-                removePlaceholderLabel();
-                if (chartsVBox.getChildren().isEmpty()) {
-                    VBox vBoxChartWindow = getChartWindowVBox(chart);
-                    chartsVBox.getChildren().add(vBoxChartWindow);
-                } else {
-                    chart.getData().clear();
-                }
-                try {
-                    XYChart.Series<String, Number> series = getChartSeries(button.getText(), "1min", "390");
-                    chart.getData().add(series);
-                    refreshStockPrice();
-                    refreshChart(button.getText(), "1min", "390");
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            stocksVBox.getChildren().add(button);
-        }
-    }
-
     private void removePlaceholderLabel() {
         if (chartsVBox.getChildren().get(0).equals(nothingToDisplayLabel)) {
             chartsVBox.getChildren().remove(chartsVBox.getChildren().getFirst());
@@ -338,12 +357,6 @@ public class MainController {
         chart.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 2px;");
         chart.setCreateSymbols(false);
         chart.setAnimated(false);
-    }
-
-    private void removeIrrelevantStocks() {
-        while (stocksVBox.getChildren().size() != 1) {
-            stocksVBox.getChildren().remove(stocksVBox.getChildren().size() - 1);
-        }
     }
 
     public void setStage(Stage stage) {

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1100.0" styleClass="borderPane" stylesheets="@profile-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.ProfileController">
+   <left>
+      <VBox prefHeight="1000.0" prefWidth="250.0" spacing="20.0" style="-fx-border-color: white;" styleClass="vBox" BorderPane.alignment="CENTER">
+         <children>
+            <Circle fx:id="profilePicture" fill="WHITE" radius="90.0" stroke="WHITE" strokeLineCap="ROUND" strokeType="INSIDE">
+               <VBox.margin>
+                  <Insets left="35.0" />
+               </VBox.margin></Circle>
+            <Label fx:id="userNameLabel" text="Mustermann" textFill="WHITE">
+               <padding>
+                  <Insets left="35.0" />
+               </padding>
+               <font>
+                  <Font name="Copperplate" size="25.0" />
+               </font></Label>
+            <Label fx:id="registeredLabel" text="reg. 01.01.2010" textFill="WHITE">
+               <padding>
+                  <Insets left="35.0" />
+               </padding>
+               <font>
+                  <Font name="Copperplate" size="20.0" />
+               </font></Label>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets top="40.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="850.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="MY STOCKS" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="22.0" />
+               </font>
+            </Label>
+            <Line endX="790.0" stroke="WHITE" strokeWidth="2.0" />
+            <HBox alignment="CENTER_LEFT" prefHeight="336.0" prefWidth="851.0" spacing="30.0">
+               <children>
+                  <PieChart fx:id="pieChart" labelsVisible="false" legendVisible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="297.0">
+                     <HBox.margin>
+                        <Insets top="-50.0" />
+                     </HBox.margin></PieChart>
+                  <VBox prefHeight="209.0" prefWidth="289.0">
+                     <children>
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="300.0">
+                           <children>
+                              <Label alignment="CENTER" prefWidth="75.0" text="Stock" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="20.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets right="37.5" />
+                                 </HBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefWidth="75.0" text="Shares" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="20.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets right="25.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Label alignment="CENTER" prefWidth="75.0" text="P / L" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="20.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="331.0" prefWidth="300.0" style="-fx-background-color: transparent;">
+                           <content>
+                              <VBox fx:id="stocksVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="206.0" prefWidth="300.0" spacing="4.0">
+                                 <children>
+                                    <Line endX="290.0" stroke="WHITE" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="60.0" />
+               </padding>
+            </HBox>
+            <Label text="ORDERS" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="22.0" />
+               </font>
+               <padding>
+                  <Insets top="30.0" />
+               </padding></Label>
+            <Line endX="790.0" stroke="WHITE" strokeWidth="2.0" />
+            <HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="790.0" spacing="93.0">
+               <children>
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="92.0" text="Order ID" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font></Label>
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="47.0" text="Date" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font></Label>
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="58.0" text="Stock" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font></Label>
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="101.0" text="Buy Price" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font></Label>
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" prefWidth="116.0" text="Order Type" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font></Label>
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="514.0" prefWidth="820.0" style="-fx-background-color: transparent;">
+               <content>
+                  <VBox fx:id="ordersVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="105.0" prefWidth="467.0" spacing="8.0">
+                     <children>
+                        <Line endX="790.0" stroke="WHITE" />
+                     </children></VBox>
+               </content>
+            </ScrollPane>
+         </children>
+         <padding>
+            <Insets left="30.0" top="40.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>

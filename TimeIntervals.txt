@@ -2,7 +2,7 @@
 1W 5min 390
 1M 1h 390
 3M 1day 90
-6M 1day 90
+6M 1day 180
 YTD 1day 0
 1Y 1day 252
 5Y 1week 260

@@ -28,11 +28,11 @@ public class RealTimeChartRefresher implements Runnable {
     @Override
     public void run() {
         try {
-            HttpResponse<String> response = httpService.getHttpResponse(stockSymbol, interval, outputSize);
+            HttpResponse<String> response = httpService.getStock(stockSymbol, interval, outputSize);
             Stock stock = getStock(response);
             XYChart.Series<String, Number> series = getSeries(stock);
             setNewChartData(series);
-            System.out.println(series.getData().get(0).getXValue());
+            System.out.println("Refresh chart");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
