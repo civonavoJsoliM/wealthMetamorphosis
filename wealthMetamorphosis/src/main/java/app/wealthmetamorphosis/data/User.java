@@ -1,11 +1,15 @@
 package app.wealthmetamorphosis.data;
 
+import java.util.List;
 import java.util.Map;
 
 public class Account {
-    private final String user;
+    private String user;
     private double balance;
+    private List<Order> orders;
     private Map<String, Double> portfolio;
+
+    public Account() {}
 
     public Account(String user, double balance, Map<String, Double> portfolio) {
         this.user = user;
@@ -31,5 +35,13 @@ public class Account {
 
     public void setPortfolio(Map<String, Double> portfolio) {
         this.portfolio = portfolio;
+    }
+
+    public void setTransactions(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<Order> getTransactions() {
+        return orders;
     }
 }
