@@ -1,0 +1,98 @@
+.borderPane {
+        -fx-background-color: #212324;
+}
+.scroll-pane > .viewport {
+        -fx-background-color: transparent;
+}
+.scroll-pane {
+        -fx-background-color: transparent;
+}
+#stockButton {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+        -fx-font-size: 20px;
+        -fx-font-family: Copperplate;
+        -fx-border-width: 0 0 1px 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#stockButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}
+.textField {
+        -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-family: Copperplate;
+    -fx-border-width: 0 0 3px 0;
+    -fx-border-color: white;
+    -fx-border-style: solid;
+}
+.scroll-bar:horizontal, .scroll-bar:vertical {
+        -fx-background-color: transparent;
+}
+.scroll-pane > .corner {
+        -fx-background-color: transparent;
+}
+#stocksAndTextFieldVBox {
+        -fx-border-width: 0 3px 0 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#tradingVBox {
+        -fx-border-width: 0 0 0 3px;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#timeIntervalButton {
+        -fx-background-color: transparent;
+        -fx-font-size: 15px;
+        -fx-font-family: Copperplate;
+        -fx-text-fill: white;
+        -fx-pref-width: 131px;
+        -fx-border-color: white;
+}
+#timeIntervalButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}
+#chart {
+        -fx-background-color: transparent;
+}
+#chart .chart-plot-background{
+        -fx-background-color: transparent;
+}
+#chart .chart-series-area-fill {
+        -fx-fill: linear-gradient(to bottom, white, transparent);
+}
+#chart .chart-series-area-line {
+        -fx-stroke: white;
+}
+#chartDataLabel {
+        -fx-text-fill: white;
+        -fx-font-family: Copperplate;
+        -fx-font-size: 18px;
+        -fx-padding: 5 0 5 0;
+}
+#profileButton {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+        -fx-border-width: 0 0 3px 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#profileButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}
+#buyButton {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+        -fx-border-width: 1px 1px 1px 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#buyButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}

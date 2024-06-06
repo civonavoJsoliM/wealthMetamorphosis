@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -9,48 +11,86 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.MainController">
-   <left>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="900.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <content>
-            <VBox fx:id="stocksVBox" alignment="TOP_CENTER" prefHeight="398.0" prefWidth="200.0">
-               <children>
-                  <TextField fx:id="searchTextField" onKeyTyped="#typingIntoSearchTextField" />
-               </children>
-            </VBox>
-         </content>
-      </ScrollPane>
-   </left>
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" styleClass="borderPane" stylesheets="@main-scene.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.MainController">
    <right>
-      <VBox prefHeight="900.0" prefWidth="217.0" spacing="30.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="tradingVBox" prefHeight="900.0" prefWidth="217.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" onMouseClicked="#onProfileClicked" text="Profile" />
-            <Label fx:id="stockLabel" text="Stock">
+            <Button fx:id="profileButton" mnemonicParsing="false" onMouseClicked="#onProfileClicked" prefWidth="214.0" text="Profile" textFill="WHITE">
                <font>
-                  <Font size="51.0" />
+                  <Font name="Copperplate" size="18.0" />
+               </font></Button>
+            <Label fx:id="stockLabel" text="Stock" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate Bold" size="51.0" />
                </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </Label>
-            <Label fx:id="priceLabel" text="Price" />
-            <HBox prefHeight="49.0" prefWidth="217.0">
+            <Label fx:id="priceLabel" text="Price" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="25.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding></Label>
+            <HBox prefHeight="13.0" prefWidth="214.0">
                <children>
-                  <Label text="Shares" />
-                  <TextField fx:id="sharesTextField" />
+                  <Label prefHeight="0.0" prefWidth="73.0" text="Shares:" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="sharesTextField" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="123.0" promptText="Enter">
+                     <font>
+                        <Font name="Copperplate" size="15.0" />
+                     </font>
+                  </TextField>
                </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER" prefHeight="45.0" prefWidth="217.0" spacing="30.0">
                <children>
-                  <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyClicked" prefHeight="27.0" prefWidth="216.0" text="Buy" />
+                  <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyClicked" prefHeight="27.0" prefWidth="216.0" text="BUY" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="25.0" />
+                     </font></Button>
                </children>
             </HBox>
-            <ScrollPane prefHeight="542.0" prefWidth="217.0" />
          </children>
       </VBox>
    </right>
    <center>
       <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="nothingToDisplayLabel" text="Choose stock to display chart" />
+            <Label fx:id="nothingToDisplayLabel" text="Choose stock to display chart!" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="15.0" />
+               </font></Label>
          </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="10.0" right="10.0" top="1.0" />
+         </padding>
       </VBox>
    </center>
+   <left>
+      <VBox fx:id="stocksAndTextFieldVBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="searchTextField" minHeight="-Infinity" onKeyTyped="#typingIntoSearchTextField" prefHeight="35.0" promptText="Search" styleClass="textField">
+               <font>
+                  <Font name="Copperplate" size="20.0" />
+               </font></TextField>
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="870.0" prefWidth="200.0" style="-fx-background-color: transparent;" vbarPolicy="NEVER">
+               <content>
+                  <VBox fx:id="stocksVBox" alignment="TOP_CENTER" minWidth="-Infinity" prefHeight="868.0" prefWidth="177.0" style="-fx-background-color: transparent;" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </left>
 </BorderPane>

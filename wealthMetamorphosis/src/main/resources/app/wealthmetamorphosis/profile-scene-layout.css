@@ -1,5 +1,5 @@
 .borderPane {
-        -fx-background-color: linear-gradient(to bottom left, #212324, #5a6064);
+        -fx-background-color: #212324;
 }
 .scroll-pane > .viewport {
         -fx-background-color: transparent;
@@ -16,7 +16,7 @@
         -fx-text-fill: white;
         -fx-font-family: Copperplate;
         -fx-font-size: 17px;
-        -fx-pref-width: 75;
+        -fx-pref-width: 73;
 }
 #ordersVBoxLabel {
         -fx-text-fill: white;

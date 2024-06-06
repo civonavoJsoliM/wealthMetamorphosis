@@ -23,7 +23,7 @@ public class TradingService {
     }
 
     public void placeOrder(OrderType orderType) {
-        Order newOrder = new Order(UUID.randomUUID().toString(), stockLabel.getText(), Double.parseDouble(priceLabel.getText()),
+        Order newOrder = new Order(UUID.randomUUID().toString(), stockLabel.getText(), Double.parseDouble(priceLabel.getText().substring(0, priceLabel.getText().length() - 1)),
                 Double.parseDouble(sharesTextField.getText()), orderType, LocalDateTime.now(), user.getUserId());
 
         DBConnection dbConnection = new DBConnection("jdbc:mysql://localhost/wealthMetamorphosis", "root", "password");
