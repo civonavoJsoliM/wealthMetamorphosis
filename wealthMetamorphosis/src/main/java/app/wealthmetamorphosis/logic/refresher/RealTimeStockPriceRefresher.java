@@ -44,7 +44,7 @@ public class RealTimeStockPriceRefresher implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                label.setText(String.valueOf(currentPrice));
+                label.setText((currentPrice) + "$");
             }
         });
     }

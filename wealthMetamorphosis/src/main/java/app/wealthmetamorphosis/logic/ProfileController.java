@@ -3,7 +3,6 @@ package app.wealthmetamorphosis.logic;
 import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.*;
 import app.wealthmetamorphosis.logic.refresher.PercentageRefresher;
-import app.wealthmetamorphosis.logic.refresher.RealTimeStockPriceRefresher;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -12,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,12 +19,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.json.JSONObject;
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -46,19 +43,28 @@ public class ProfileController {
     private PieChart pieChart;
     @FXML
     private Circle profilePicture;
-
+    @FXML
+    private ScrollPane stocksScrollPane;
+    @FXML
+    private ScrollPane ordersScrollPane;
     private Stage profileStage;
     private int counter;
     private List<String> colors;
     private FileReader fileReader;
     private HttpService service;
-    private RealTimeStockPriceRefresher realTimeStockPriceRefresher;
-    private PercentageRefresher percentageRefresher;
-    private DecimalFormat decimalFormat;
     private List<ScheduledExecutorService> scheduledExecutorServices;
+    private List<Label> profitLossLabels;
 
     @FXML
-    void initialize() throws IOException, InterruptedException {
+    void initialize() throws IOException {
+        fileReader = new FileReader();
+        service = new HttpService(fileReader, counter);
+        counter = 0;
+        scheduledExecutorServices = new ArrayList<>();
+        colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/Colors.txt"));
+        fillPieChartWithData();
+        fillStocksVBoxWithData();
+        fillOrdersVBox();
         profileStage = new Stage();
         profileStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -67,16 +73,7 @@ public class ProfileController {
                 scheduledExecutorServices.forEach(ScheduledExecutorService::shutdownNow);
             }
         });
-        decimalFormat = new DecimalFormat("0.00");
-        fileReader = new FileReader();
-        service = new HttpService(fileReader, counter);
-        counter = 0;
-        scheduledExecutorServices = new ArrayList<>();
-        colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/Colors.txt"));
 
-        fillPieChartWithData();
-        fillStocksVBoxWithData();
-        fillOrdersVBox();
         setProfilePicture();
 
         userNameLabel.setText(UserSingleton.getInstance().getUserName());
@@ -89,7 +86,7 @@ public class ProfileController {
         profilePicture.setFill(pattern);
     }
 
-    private void fillStocksVBoxWithData() throws IOException, InterruptedException {
+    private void fillStocksVBoxWithData() {
         UserSingleton.getInstance().getOrders().stream()
                 .filter(order -> order.getOrderType().equals(OrderType.SELL))
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
@@ -97,19 +94,22 @@ public class ProfileController {
         Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
                 .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)));
 
+        profitLossLabels = new ArrayList<>();
         int i = 0;
         for (Map.Entry<String, Double> entry : portfolio.entrySet()) {
             Label stockLabel = getStocksVBoxStockLabel(entry, colors, i);
             Label sharesLabel = getSharesLabel(entry);
             Label profitLossLabel = getProfitLossLabel(entry);
+            profitLossLabels.add(profitLossLabel);
             HBox hBox = gethBox(stockLabel, sharesLabel, profitLossLabel);
             stocksVBox.getChildren().add(hBox);
             stocksVBox.setId("stocksVBox");
             i++;
-            if (i == 49) {
+            if (i == colors.size()) {
                 i = 0;
             }
         }
+        getPercentageScheduler();
     }
 
     private HBox gethBox(Label stockLabel, Label sharesLabel, Label profitLossLabel) {
@@ -120,11 +120,9 @@ public class ProfileController {
         return hBox;
     }
 
-    private Label getProfitLossLabel(Map.Entry<String, Double> entry) throws IOException, InterruptedException {
+    private Label getProfitLossLabel(Map.Entry<String, Double> entry) {
         Label profitLossLabel = new Label();
         profitLossLabel.setId("stocksVBoxLabel");
-        double profitLossPercentage = getPercentage(entry.getKey(), profitLossLabel);
-        profitLossLabel.setText(decimalFormat.format(profitLossPercentage) + " %");
         return profitLossLabel;
     }
 
@@ -143,47 +141,11 @@ public class ProfileController {
         return stockLabel;
     }
 
-    private double getPercentage(String stockSymbol, Label profitLossLabel) throws IOException, InterruptedException {
-        OptionalDouble avgBuyPriceOptional = UserSingleton.getInstance().getOrders().stream()
-                .filter(order -> order.getStockSymbol().equals(stockSymbol) && order.getOrderType().equals(OrderType.BUY))
-                .mapToDouble(Order::getStockPrice)
-                .average();
-
-        JSONObject jsonObject = getJsonObject(stockSymbol);
-        ScheduledExecutorService realTimeStockPriceScheduler = getRealTimeStockPriceScheduler(stockSymbol, jsonObject);
-        double currentStockPrice = Double.parseDouble(jsonObject.getString("price"));
-        double avgBuyPrice = 0;
-        if (avgBuyPriceOptional.isPresent()) {
-            ScheduledExecutorService percentageScheduler = getPercentageScheduler(profitLossLabel, avgBuyPriceOptional, currentStockPrice);
-            avgBuyPrice = getAvgBuyPrice(currentStockPrice, avgBuyPriceOptional);
-            scheduledExecutorServices.addAll(List.of(realTimeStockPriceScheduler, percentageScheduler));
-        }
-        return avgBuyPrice;
-    }
-
-    private double getAvgBuyPrice(double currentStockPrice, OptionalDouble avgBuyPriceOptional) {
-        double difference = currentStockPrice - avgBuyPriceOptional.getAsDouble();
-        return 100 / (avgBuyPriceOptional.getAsDouble() / difference);
-    }
-
-    private ScheduledExecutorService getPercentageScheduler(Label profitLossLabel, OptionalDouble avgBuyPriceOptional, double currentStockPrice) {
-        percentageRefresher = new PercentageRefresher(avgBuyPriceOptional.getAsDouble(), currentStockPrice, profitLossLabel);
+    private void getPercentageScheduler() {
+        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service);
         ScheduledExecutorService percentageScheduler = Executors.newScheduledThreadPool(1);
-        percentageScheduler.scheduleAtFixedRate(this.percentageRefresher, 1, 30, TimeUnit.SECONDS);
-        return percentageScheduler;
-    }
-
-    private ScheduledExecutorService getRealTimeStockPriceScheduler(String stockSymbol, JSONObject jsonObject) {
-        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(service, jsonObject);
-        realTimeStockPriceRefresher.setStockSymbol(stockSymbol);
-        ScheduledExecutorService realTimeStockPriceScheduler = Executors.newScheduledThreadPool(1);
-        realTimeStockPriceScheduler.scheduleAtFixedRate(realTimeStockPriceRefresher, 0, 30, TimeUnit.SECONDS);
-        return realTimeStockPriceScheduler;
-    }
-
-    private JSONObject getJsonObject(String stockSymbol) throws IOException, InterruptedException {
-        HttpResponse<String> response = service.getRealTimeStockPrice(stockSymbol);
-        return new JSONObject(response.body());
+        percentageScheduler.scheduleAtFixedRate(refresher, 0, 30, TimeUnit.SECONDS);
+        scheduledExecutorServices.add(percentageScheduler);
     }
 
     private void fillOrdersVBox() {
@@ -263,6 +225,30 @@ public class ProfileController {
             }
         }
         pieChart.setId("pieChart");
+    }
+
+    @FXML
+    void onMouseEnteredStocksScrollPane() {
+        stocksScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        stocksScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    }
+
+    @FXML
+    void onMouseExitedStocksScrollPane() {
+        stocksScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        stocksScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    }
+
+    @FXML
+    void onMouseEnteredOrdersScrollPane() {
+        ordersScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        ordersScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    }
+
+    @FXML
+    void onMouseExitedOrdersScrollPane() {
+        ordersScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        ordersScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
     public Stage getProfileStage() {

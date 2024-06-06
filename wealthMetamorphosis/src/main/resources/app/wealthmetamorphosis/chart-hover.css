@@ -1,0 +1,9 @@
+#chart .chart-plot-background {
+        -fx-background-color: transparent;
+}
+#chart .chart-series-area-fill {
+        -fx-fill: linear-gradient(to bottom, #89CFF0, transparent);
+}
+#chart .chart-series-area-line {
+        -fx-stroke: #89CFF0;
+}

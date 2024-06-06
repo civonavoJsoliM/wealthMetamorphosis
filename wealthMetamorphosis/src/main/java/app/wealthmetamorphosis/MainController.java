@@ -8,9 +8,11 @@ import app.wealthmetamorphosis.logic.db.ResultSetToList;
 import app.wealthmetamorphosis.logic.refresher.RealTimeChartRefresher;
 import app.wealthmetamorphosis.logic.refresher.RealTimeStockPriceRefresher;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.css.Stylesheet;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
@@ -19,6 +21,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -26,17 +29,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class MainController {
     // main pane
@@ -48,6 +54,8 @@ public class MainController {
     private VBox stocksVBox;
     @FXML
     private TextField searchTextField;
+    @FXML
+    private ScrollPane scrollPane;
 
     // chart Nodes
     @FXML
@@ -56,6 +64,8 @@ public class MainController {
     private Label nothingToDisplayLabel;
 
     // trading Nodes
+    @FXML
+    private Button profileButton;
     @FXML
     private Label stockLabel;
     @FXML
@@ -66,6 +76,8 @@ public class MainController {
     private Button buyButton;
     @FXML
     private Button sellButton;
+    @FXML
+    private VBox tradingVBox;
 
     private Stage stage;
     private List<String> stockSymbols;
@@ -83,9 +95,19 @@ public class MainController {
     private RealTimeChartRefresher realTimeChartRefresher;
     private Label chartDataLabel;
 
+    private double yMin;
+    private double yMax;
+    private double height;
+    private CategoryAxis xAxis;
+    private NumberAxis yAxis;
+    private Line line;
+
 
     @FXML
     void initialize() {
+        // testing
+        tradingVBox.setVisible(false);
+
         stocks = new ArrayList<>();
         setUpChart();
         counter = 0;
@@ -114,8 +136,10 @@ public class MainController {
             stocks.getLast().setSymbol(stockSymbol);
             stocks.getLast().setButton(new Button());
             stocks.getLast().getButton().setText(stockSymbol);
+            stocks.getLast().getButton().setId("stockButton");
             stocks.getLast().getButton().setPrefWidth(stocksVBox.getPrefWidth());
             stocks.getLast().getButton().setOnMouseClicked(event -> {
+                tradingVBox.setVisible(true);
                 stockLabel.setText(stockSymbol);
                 removePlaceholderLabel();
                 if (chartsVBox.getChildren().isEmpty()) {
@@ -149,11 +173,14 @@ public class MainController {
 
         // Label to display Chart Data
         chartDataLabel = new Label();
+        chartDataLabel.setText("Date and price");
+        chartDataLabel.setId("chartDataLabel");
+        chartDataLabel.setVisible(false);
     }
 
     @FXML
     void onProfileClicked() throws IOException {
-        Stage profileStage = new Stage();
+        //Stage profileStage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("profile-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         ProfileController controller = fxmlLoader.getController();
@@ -174,7 +201,7 @@ public class MainController {
     }
 
     private void removeIrrelevantStocks() {
-        while (stocksVBox.getChildren().size() != 1) {
+        while (!stocksVBox.getChildren().isEmpty()) {
             stocksVBox.getChildren().remove(stocksVBox.getChildren().size() - 1);
         }
     }
@@ -183,7 +210,9 @@ public class MainController {
     void onBuyClicked() {
         tradingService.placeOrder(OrderType.BUY);
         Optional<Stock> stock = stocks.stream().filter(stk -> stk.getSymbol().equals(stockLabel.getText())).findFirst();
-        stock.ifPresent(value -> value.getButton().setStyle("-fx-background-color: green"));
+
+        // change
+        stock.ifPresent(value -> value.getButton().setStyle("-fx-background-color: #89CFF0"));
     }
 
     private XYChart.Series<String, Number> getChartSeries(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
@@ -208,7 +237,7 @@ public class MainController {
         HBox hBox = getHBox(chart);
 
         // create Line
-        Line line = getLine();
+        line = getLine(chart);
 
         // create Circle
         Circle circle = getCircle();
@@ -240,11 +269,20 @@ public class MainController {
         // move to css file
         hBox.setStyle("-fx-background-color: transparent");
 
+        List<Button> timeIntervalButtons = new ArrayList<>();
         List<String> timeIntervalsData = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TimeIntervals.txt");
         for (String timeInterval : timeIntervalsData) {
             Button timeIntervalButton = new Button();
             timeIntervalButton.setText(timeInterval.split(" ")[0]);
+            if (timeIntervalButton.getText().equals("1D")) {
+                timeIntervalButton.getStylesheets().add(Objects.requireNonNull(getClass().getResource("timeIntervalButton-whenPressed.css")).toExternalForm());
+            }
+            timeIntervalButton.setId("timeIntervalButton");
+            timeIntervalButtons.add(timeIntervalButton);
             timeIntervalButton.setOnMouseClicked(event -> {
+                if (!timeIntervalButton.getStylesheets().contains(Objects.requireNonNull(getClass().getResource("timeIntervalButton-whenPressed.css")).toExternalForm())) {
+                    timeIntervalButton.getStylesheets().add(Objects.requireNonNull(getClass().getResource("timeIntervalButton-whenPressed.css")).toExternalForm());
+                }
                 String outputSize = getOutputSize(timeInterval);
                 try {
                     XYChart.Series<String, Number> series = getChartSeries(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
@@ -254,11 +292,15 @@ public class MainController {
 
                     chartSchedule = Executors.newScheduledThreadPool(1);
                     refreshChart(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
+
+                    timeIntervalButtons.stream().filter(button -> !button.equals(timeIntervalButton)).forEach(button -> button.getStylesheets().clear());
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             });
+
             hBox.getChildren().add(timeIntervalButton);
+            hBox.setAlignment(Pos.CENTER);
         }
         return hBox;
     }
@@ -274,6 +316,20 @@ public class MainController {
         stackPane.setStyle("-fx-background-color: transparent");
         stackPane.getChildren().add(chart);
         stackPane.getChildren().add(pane);
+        stackPane.setOnMouseEntered(event -> {
+            chartDataLabel.setVisible(true);
+            pane.setVisible(true);
+            yMax = yAxis.getDisplayPosition(yAxis.getUpperBound());
+            line.setStartY(yMax + yAxis.getBaselineOffset());
+            yMin = yAxis.getDisplayPosition(yAxis.getLowerBound());
+            line.setEndY(yMin + yAxis.getBaselineOffset());
+            chart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("chart-hover.css")).toExternalForm());
+        });
+        stackPane.setOnMouseExited(event -> {
+            chartDataLabel.setVisible(false);
+            chart.getStylesheets().clear();
+            pane.setVisible(false);
+        });
         return stackPane;
     }
 
@@ -300,7 +356,7 @@ public class MainController {
                             // set circle center coordinates
                             circle.setCenterX(event.getX());
                             circle.setCenterY(yPos);
-                            chartDataLabel.setText(data.getXValue() + " " + data.getYValue());
+                            chartDataLabel.setText(data.getXValue() + " | " + data.getYValue() + "$");
                         }
                     }
                 }
@@ -311,18 +367,18 @@ public class MainController {
 
     private Circle getCircle() {
         Circle circle = new Circle();
-        circle.setFill(Paint.valueOf(String.valueOf(Color.BLACK)));
-        circle.setRadius(2);
+        circle.setFill(Paint.valueOf(String.valueOf(Color.WHITE)));
+        circle.setRadius(5);
         return circle;
     }
 
-    private Line getLine() {
-        Line line = new Line();
+    private Line getLine(AreaChart<String, Number> chart) {
+        line = new Line();
+        line.setFill(Paint.valueOf(String.valueOf(Color.WHITE)));
         line.setStartX(0);
         line.setEndX(0);
-        line.setStartY(17);
-        line.setEndY(250);
-        line.setStrokeWidth(1);
+        line.setStrokeWidth(2);
+        line.setStroke(Paint.valueOf(Color.WHITE.toString()));
         return line;
     }
 
@@ -343,20 +399,41 @@ public class MainController {
     }
 
     private void setUpChart() {
-        CategoryAxis xAxis = new CategoryAxis();
+        xAxis = new CategoryAxis();
         xAxis.setAutoRanging(true);
+        xAxis.setTickMarkVisible(false);
+        xAxis.setTickLabelsVisible(false);
         xAxis.setTickLabelGap(0);
         xAxis.setStartMargin(0);
         xAxis.setGapStartAndEnd(false);
-        NumberAxis yAxis = new NumberAxis();
+        xAxis.setTickLabelFill(Paint.valueOf(Color.WHITE.toString()));
+
+        yAxis = new NumberAxis();
         yAxis.setAutoRanging(true);
+        yAxis.setTickLabelFont(Font.font("Copperplate"));
         yAxis.setTickLabelGap(0);
         yAxis.setPrefWidth(30);
-        chart = new AreaChart<>(xAxis, yAxis);
         yAxis.setForceZeroInRange(false);
-        chart.setStyle("-fx-background-color: transparent; -fx-border-color: black; -fx-border-width: 2px;");
+        yAxis.setTickLabelFill(Paint.valueOf(Color.WHITE.toString()));
+
+        chart = new AreaChart<>(xAxis, yAxis);
+        chart.setId("chart");
         chart.setCreateSymbols(false);
         chart.setAnimated(false);
+        chart.setLegendVisible(false);
+        chart.setHorizontalGridLinesVisible(false);
+        chart.setVerticalGridLinesVisible(false);
+        chart.setPrefHeight(857);
+    }
+
+    @FXML
+    void onMouseEntered() {
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    }
+
+    @FXML
+    void onMouseExited() {
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
     public void setStage(Stage stage) {
