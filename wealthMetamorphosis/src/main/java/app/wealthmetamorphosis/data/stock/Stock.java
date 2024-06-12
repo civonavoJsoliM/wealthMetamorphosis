@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.data;
+package app.wealthmetamorphosis.data.stock;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.scene.control.Button;

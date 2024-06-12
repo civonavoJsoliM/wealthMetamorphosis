@@ -13,4 +13,10 @@ module app.wealthmetamorphosis {
     exports app.wealthmetamorphosis;
     exports app.wealthmetamorphosis.data to com.fasterxml.jackson.databind;
     exports app.wealthmetamorphosis.logic to javafx.fxml;
+    exports app.wealthmetamorphosis.data.singleton to com.fasterxml.jackson.databind;
+    exports app.wealthmetamorphosis.data.stock to com.fasterxml.jackson.databind;
+    exports app.wealthmetamorphosis.logic.service to javafx.fxml;
+    opens app.wealthmetamorphosis.logic.service to javafx.fxml;
+    exports app.wealthmetamorphosis.logic.controller;
+    opens app.wealthmetamorphosis.logic.controller to javafx.fxml;
 }

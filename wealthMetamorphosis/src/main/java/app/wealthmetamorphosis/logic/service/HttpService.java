@@ -1,4 +1,6 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.service;
+
+import app.wealthmetamorphosis.logic.FileReader;
 
 import java.io.IOException;
 import java.net.URI;

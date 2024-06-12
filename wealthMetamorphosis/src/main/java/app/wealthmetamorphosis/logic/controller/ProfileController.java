@@ -1,8 +1,11 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.controller;
 
 import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.*;
+import app.wealthmetamorphosis.data.singleton.UserSingleton;
+import app.wealthmetamorphosis.logic.FileReader;
 import app.wealthmetamorphosis.logic.refresher.PercentageRefresher;
+import app.wealthmetamorphosis.logic.service.HttpService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -47,6 +50,10 @@ public class ProfileController {
     private ScrollPane stocksScrollPane;
     @FXML
     private ScrollPane ordersScrollPane;
+    @FXML
+    private Label availableFundsLabel;
+    @FXML
+    private Label portfolioWorthLabel;
     private Stage profileStage;
     private int counter;
     private List<String> colors;
@@ -65,6 +72,15 @@ public class ProfileController {
         fillPieChartWithData();
         fillStocksVBoxWithData();
         fillOrdersVBox();
+        setProfileStage();
+        setProfilePicture();
+
+        userNameLabel.setText(UserSingleton.getInstance().getUserName());
+        registeredLabel.setText(UserSingleton.getInstance().getRegistered().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        availableFundsLabel.setText(UserSingleton.getInstance().getBalance() + "$");
+    }
+
+    private void setProfileStage() {
         profileStage = new Stage();
         profileStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -73,33 +89,32 @@ public class ProfileController {
                 scheduledExecutorServices.forEach(ScheduledExecutorService::shutdownNow);
             }
         });
-
-        setProfilePicture();
-
-        userNameLabel.setText(UserSingleton.getInstance().getUserName());
-        registeredLabel.setText(UserSingleton.getInstance().getRegistered().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        profileStage.setResizable(false);
     }
 
     private void setProfilePicture() {
-        Image image = new Image(String.valueOf(Objects.requireNonNull(Main.class.getResource("profile-picture.jpg"))));
+        Image image = new Image(String.valueOf(Objects.requireNonNull(getClass().getResource("/app/wealthmetamorphosis/jpg/profile-picture.jpg"))));
         ImagePattern pattern = new ImagePattern(image);
         profilePicture.setFill(pattern);
     }
 
     private void fillStocksVBoxWithData() {
         UserSingleton.getInstance().getOrders().stream()
-                .filter(order -> order.getOrderType().equals(OrderType.SELL))
+                .filter(order -> order.getOrderType().equals(OrderType.SELL)  && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
 
         Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
-                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)));
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         profitLossLabels = new ArrayList<>();
         int i = 0;
         for (Map.Entry<String, Double> entry : portfolio.entrySet()) {
             Label stockLabel = getStocksVBoxStockLabel(entry, colors, i);
             Label sharesLabel = getSharesLabel(entry);
-            Label profitLossLabel = getProfitLossLabel(entry);
+            Label profitLossLabel = getProfitLossLabel();
             profitLossLabels.add(profitLossLabel);
             HBox hBox = gethBox(stockLabel, sharesLabel, profitLossLabel);
             stocksVBox.getChildren().add(hBox);
@@ -120,7 +135,7 @@ public class ProfileController {
         return hBox;
     }
 
-    private Label getProfitLossLabel(Map.Entry<String, Double> entry) {
+    private Label getProfitLossLabel() {
         Label profitLossLabel = new Label();
         profitLossLabel.setId("stocksVBoxLabel");
         return profitLossLabel;
@@ -142,7 +157,7 @@ public class ProfileController {
     }
 
     private void getPercentageScheduler() {
-        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service);
+        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service, portfolioWorthLabel);
         ScheduledExecutorService percentageScheduler = Executors.newScheduledThreadPool(1);
         percentageScheduler.scheduleAtFixedRate(refresher, 0, 30, TimeUnit.SECONDS);
         scheduledExecutorServices.add(percentageScheduler);
@@ -150,31 +165,21 @@ public class ProfileController {
 
     private void fillOrdersVBox() {
         for (Order order : UserSingleton.getInstance().getOrders()) {
-            Label orderIdLabel = getOrderIdLabel(order);
             Label dateLabel = getDateLabel(order);
             Label stockLabel = getOrdersVBoxStockLabel(order);
+            Label sharesLabel = getSharesLabel(order);
             Label buyPriceLabel = getBuyPriceLabel(order);
             Label orderTypeLabel = getOrderTypeLabel(order);
-            HBox hBox = new HBox(orderIdLabel, dateLabel, stockLabel, buyPriceLabel, orderTypeLabel);
+            HBox hBox = new HBox(dateLabel, stockLabel, sharesLabel, buyPriceLabel, orderTypeLabel);
             ordersVBox.getChildren().add(hBox);
         }
     }
 
-    private Label getOrderIdLabel(Order order) {
-        String orderIdSubString = order.getOrderId().substring(order.getOrderId().length() - 4);
-        orderIdSubString = "..." + orderIdSubString;
-        Label orderIdLabel = new Label();
-        orderIdLabel.setText(orderIdSubString);
-        orderIdLabel.setId("ordersVBoxLabel");
-        orderIdLabel.setPadding(new Insets(0, 0, 0, 20));
-        return orderIdLabel;
-    }
-
     private Label getDateLabel(Order order) {
         Label dateLabel = new Label();
-        dateLabel.setText(order.getOrderTimeStamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh.mm.ss")));
+        dateLabel.setText(order.getOrderTimeStamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss")));
         dateLabel.setId("ordersVBoxLabel");
-        dateLabel.setPadding(new Insets(0, 0, 0, 49));
+        dateLabel.setPadding(new Insets(0, 0, 0, 0));
         return dateLabel;
     }
 
@@ -182,14 +187,23 @@ public class ProfileController {
         Label stockLabel = new Label();
         stockLabel.setText(order.getStockSymbol());
         stockLabel.setId("ordersVBoxLabel");
-        stockLabel.setPadding(new Insets(0, 0, 0, 32));
+        stockLabel.setPadding(new Insets(0, 0, 0, 45));
         stockLabel.setPrefWidth(100);
         return stockLabel;
     }
 
+    private Label getSharesLabel(Order order) {
+        Label sharesLabel = new Label();
+        sharesLabel.setText(String.valueOf(order.getStockShares()));
+        sharesLabel.setId("ordersVBoxLabel");
+        sharesLabel.setPadding(new Insets(0, 0, 0, 100));
+        sharesLabel.setPrefWidth(150);
+        return sharesLabel;
+    }
+
     private Label getBuyPriceLabel(Order order) {
         Label buyPriceLabel = new Label();
-        buyPriceLabel.setText(String.valueOf(order.getStockPrice()));
+        buyPriceLabel.setText(order.getStockPrice() + "$");
         buyPriceLabel.setId("ordersVBoxLabel");
         buyPriceLabel.setPadding(new Insets(0, 0, 0, 90));
         buyPriceLabel.setPrefWidth(200);
@@ -200,7 +214,7 @@ public class ProfileController {
         Label orderTypeLabel = new Label();
         orderTypeLabel.setText(order.getOrderType().name());
         orderTypeLabel.setId("ordersVBoxLabel");
-        orderTypeLabel.setPadding(new Insets(0, 0, 0, 120));
+        orderTypeLabel.setPadding(new Insets(0, 0, 0, 100));
         return orderTypeLabel;
     }
 
@@ -220,7 +234,7 @@ public class ProfileController {
             pieChart.getData().add(data);
             data.getNode().setStyle("-fx-background-color: " + colors.get(i));
             i++;
-            if (i == 49) {
+            if (i == colors.size()) {
                 i = 0;
             }
         }

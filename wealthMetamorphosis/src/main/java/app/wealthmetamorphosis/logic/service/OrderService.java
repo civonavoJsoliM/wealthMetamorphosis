@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.service;
 
 import app.wealthmetamorphosis.data.Order;
 import app.wealthmetamorphosis.data.OrderType;

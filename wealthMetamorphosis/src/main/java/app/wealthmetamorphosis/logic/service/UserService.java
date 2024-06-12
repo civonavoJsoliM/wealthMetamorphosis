@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.service;
 
 import app.wealthmetamorphosis.data.User;
 import app.wealthmetamorphosis.logic.db.ResultSetToList;

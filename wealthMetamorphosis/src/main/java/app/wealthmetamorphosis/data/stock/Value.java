@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.data;
+package app.wealthmetamorphosis.data.stock;
 
 public class Value {
     private String datetime;

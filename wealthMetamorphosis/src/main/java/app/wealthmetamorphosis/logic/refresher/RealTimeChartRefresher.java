@@ -1,7 +1,7 @@
 package app.wealthmetamorphosis.logic.refresher;
 
-import app.wealthmetamorphosis.data.Stock;
-import app.wealthmetamorphosis.logic.HttpService;
+import app.wealthmetamorphosis.data.stock.Stock;
+import app.wealthmetamorphosis.logic.service.HttpService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
@@ -18,6 +18,7 @@ public class RealTimeChartRefresher implements Runnable {
     private String interval;
     private String outputSize;
     private final AreaChart<String, Number> chart;
+    private int i = 0;
 
     public RealTimeChartRefresher(HttpService httpService, AreaChart<String, Number> chart, ObjectMapper objectMapper) {
         this.httpService = httpService;
@@ -28,11 +29,12 @@ public class RealTimeChartRefresher implements Runnable {
     @Override
     public void run() {
         try {
+            System.out.println(++i);
             HttpResponse<String> response = httpService.getStock(stockSymbol, interval, outputSize);
             Stock stock = getStock(response);
             XYChart.Series<String, Number> series = getSeries(stock);
             setNewChartData(series);
-            System.out.println("Refresh chart");
+            System.out.println("Refresh chart of: " + stockSymbol);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

@@ -53,4 +53,17 @@ public class Order {
     public void setStockShares(double stockShares) {
         this.stockShares = stockShares;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId='" + orderId + '\'' +
+                ", stockSymbol='" + stockSymbol + '\'' +
+                ", stockPrice=" + stockPrice +
+                ", stockShares=" + stockShares +
+                ", orderType=" + orderType +
+                ", orderTimeStamp=" + orderTimeStamp +
+                ", userId='" + userId + '\'' +
+                '}';
+    }
 }
