@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.shape.*?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1100.0" styleClass="borderPane" stylesheets="@css/profile-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.ProfileController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1100.0" styleClass="borderPane" stylesheets="@../css/profile-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.ProfileController">
    <left>
       <VBox prefHeight="1000.0" prefWidth="250.0" spacing="20.0" style="-fx-border-color: white;" styleClass="vBox" BorderPane.alignment="CENTER">
          <children>
@@ -102,7 +101,7 @@
             <Line endX="790.0" stroke="WHITE" strokeWidth="2.0" />
             <HBox alignment="CENTER_LEFT" prefHeight="474.0" prefWidth="820.0" spacing="30.0">
                <children>
-                  <PieChart fx:id="pieChart" labelsVisible="false" legendVisible="false" prefHeight="306.0" prefWidth="301.0" stylesheets="@css/profile-scene-layout.css">
+                  <PieChart fx:id="pieChart" labelsVisible="false" legendVisible="false" prefHeight="306.0" prefWidth="301.0">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin></PieChart>

@@ -1,6 +1,6 @@
 package app.wealthmetamorphosis.logic.refresher;
 
-import app.wealthmetamorphosis.logic.HttpService;
+import app.wealthmetamorphosis.logic.service.HttpService;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
@@ -27,12 +27,11 @@ public class RealTimeStockPriceRefresher implements Runnable {
             double currentPrice = getPriceFromJSONObject(response);
             if (label != null) {
                 setNewPrice(currentPrice);
-                System.out.println("Refresh price");
+                System.out.println("Refresh price of: " + stockSymbol);
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("RealTimeStockPriceRefresher running");
     }
 
     private double getPriceFromJSONObject(HttpResponse<String> response) {

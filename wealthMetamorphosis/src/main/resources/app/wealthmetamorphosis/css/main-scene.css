@@ -7,22 +7,33 @@
 .scroll-pane {
         -fx-background-color: transparent;
 }
+#stocksVBox {
+        -fx-alignment: top-center;
+}
+#ownedStockCircle {
+        -fx-fill: white;
+        -fx-stroke: white;
+}
 #stockButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
         -fx-font-size: 20px;
         -fx-font-family: Copperplate;
+}
+#stockButton:hover {
+        -fx-text-fill: #212324;
+}
+#stockHBox {
+        -fx-background-color: #212324;
+        -fx-alignment: center;
         -fx-border-width: 0 0 1px 0;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
-#stockButton:hover {
-        -fx-background-color: white;
-        -fx-text-fill: #212324;
-}
 .textField {
-        -fx-background-color: transparent;
+    -fx-background-color: transparent;
     -fx-text-fill: white;
+    -fx-font-size: 20px;
     -fx-font-family: Copperplate;
     -fx-border-width: 0 0 3px 0;
     -fx-border-color: white;
@@ -58,6 +69,9 @@
 }
 #chart {
         -fx-background-color: transparent;
+        -fx-pref-height: 857px;
+        -fx-horizontal-grid-lines-visible: false;
+        -fx-vertical-grid-lines-visible: false;
 }
 #chart .chart-plot-background{
         -fx-background-color: transparent;
@@ -68,6 +82,40 @@
 #chart .chart-series-area-line {
         -fx-stroke: white;
 }
+#xAxis {
+        -fx-tick-label-fill: white;
+        -fx-tick-label-gap: 0px;
+        -fx-tick-mark-visible: false;
+        -fx-tick-labels-visible: false;
+}
+#yAxis {
+        -fx-tick-label-fill: white;
+        -fx-tick-label-font-family: Copperplate;
+        -fx-tick-label-gap: 0px;
+        -fx-pref-width: 30px;
+}
+#chartLine {
+        -fx-fill: white;
+        -fx-stroke: white;
+        -fx-stroke-width: 2px;
+}
+#chartLineCircle {
+        -fx-fill: white;
+}
+#stackPane {
+        -fx-background-color: transparent;
+}
+#timeIntervalsHBox {
+        -fx-background-color: transparent;
+        -fx-alignment: center;
+}
+#chartDataHBox {
+        -fx-alignment: top-center;
+}
+#chartWindowVBox {
+        -fx-background-color: transparent;
+        -fx-alignment: top-center;
+}
 #chartDataLabel {
         -fx-text-fill: white;
         -fx-font-family: Copperplate;
@@ -77,7 +125,7 @@
 #profileButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
-        -fx-border-width: 0 0 3px 0;
+        -fx-border-width: 0 0 3px 3px;;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
@@ -88,11 +136,22 @@
 #buyButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
-        -fx-border-width: 1px 1px 1px 0;
+        -fx-border-width: 1px 0 1px 0;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
 #buyButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}
+#sellButton {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+        -fx-border-width: 1px 0 1px 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#sellButton:hover {
         -fx-background-color: white;
         -fx-text-fill: #212324;
 }
