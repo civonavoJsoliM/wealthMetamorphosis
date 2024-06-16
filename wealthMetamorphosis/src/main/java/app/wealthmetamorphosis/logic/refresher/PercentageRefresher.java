@@ -4,8 +4,12 @@ import app.wealthmetamorphosis.data.Order;
 import app.wealthmetamorphosis.data.OrderType;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.logic.service.HttpService;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -17,11 +21,13 @@ public class PercentageRefresher implements Runnable {
     private final List<Label> profitLossLabels;
     private final HttpService service;
     private final Label portfolioWorthLabel;
+    private final HBox myStocksHBox;
 
-    public PercentageRefresher(List<Label> profitLossLabels, HttpService service, Label portfolioWorthLabel) {
+    public PercentageRefresher(List<Label> profitLossLabels, HttpService service, Label portfolioWorthLabel, HBox myStocksHBox) {
         this.profitLossLabels = profitLossLabels;
         this.service = service;
         this.portfolioWorthLabel = portfolioWorthLabel;
+        this.myStocksHBox = myStocksHBox;
     }
 
     @Override
@@ -64,12 +70,17 @@ public class PercentageRefresher implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                portfolioWorthLabel.setText(Math.round(portfolioWorth) + "$");
-                DecimalFormat decimalFormat = new DecimalFormat("0.00");
-                for (int i = 0; i < profitLossLabels.size(); i++) {
-                    profitLossLabels.get(i).setText(decimalFormat.format(percentages.get(i)) + " %");
-                }
-                System.out.println("Done");
+                PauseTransition transition = new PauseTransition(Duration.seconds(3));
+                transition.setOnFinished(event -> {
+                    portfolioWorthLabel.setText(Math.round(portfolioWorth) + "$");
+                    DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                    for (int i = 0; i < profitLossLabels.size(); i++) {
+                        profitLossLabels.get(i).setText(decimalFormat.format(percentages.get(i)) + " %");
+                    }
+                    myStocksHBox.toFront();
+                    System.out.println("Done");
+                });
+                transition.playFromStart();
             }
         });
     }

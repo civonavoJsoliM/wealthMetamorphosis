@@ -15,6 +15,7 @@
 #stocksVBoxLabel {
         -fx-text-fill: white;
         -fx-font-family: Copperplate;
+        -fx-font-weight: lighter;
         -fx-font-size: 17px;
         -fx-pref-width: 73;
 }
@@ -22,6 +23,7 @@
         -fx-text-fill: white;
         -fx-font-family: Copperplate;
         -fx-font-size: 17px;
+        -fx-font-weight: lighter;
 }
 #pieChart {
         -fx-border-color: transparent;
@@ -41,4 +43,15 @@
 }
 #stocksVBox:even {
         -fx-background-color: white;
+}
+#logOutButton {
+        -fx-background-color: transparent;
+        -fx-text-fill: white;
+        -fx-border-width: 3px 0 0 0;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+}
+#logOutButton:hover {
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
 }

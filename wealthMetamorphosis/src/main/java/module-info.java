@@ -6,6 +6,7 @@ module app.wealthmetamorphosis {
     requires com.fasterxml.jackson.databind;
     requires org.json;
     requires java.sql;
+    requires org.apache.commons.codec;
 
 
     opens app.wealthmetamorphosis to javafx.fxml;

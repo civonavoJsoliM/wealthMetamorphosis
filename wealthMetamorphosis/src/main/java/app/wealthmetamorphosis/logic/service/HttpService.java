@@ -22,7 +22,7 @@ public class HttpService {
         counter++;
         List<String> apiKeys = getApiKeys();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://twelve-data1.p.rapidapi.com/price?symbol=" + symbol + "&format=json&outputsize=1"))
+                .uri(URI.create("https://twelve-data1.p.rapidapi.com/price?format=json&outputsize=1&symbol="  + symbol))
                 .header("X-RapidAPI-Key", apiKeys.get(counter % apiKeys.size()))
                 .header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -34,7 +34,7 @@ public class HttpService {
         counter++;
         List<String> apiKeys = getApiKeys();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://twelve-data1.p.rapidapi.com/time_series?symbol=" + symbol + "&interval=" + interval + "&outputsize=" + outputSize + "&format=json"))
+                .uri(URI.create("https://twelve-data1.p.rapidapi.com/time_series?outputsize=" + outputSize + "&symbol=" + symbol + "&interval=" + interval + "&format=json"))
                 .header("X-RapidAPI-Key", apiKeys.get(counter % apiKeys.size()))
                 .header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
