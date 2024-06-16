@@ -1,8 +1,8 @@
 package app.wealthmetamorphosis.logic.controller;
 
-import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.*;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
+import app.wealthmetamorphosis.data.stock.Stock;
 import app.wealthmetamorphosis.logic.FileReader;
 import app.wealthmetamorphosis.logic.refresher.PercentageRefresher;
 import app.wealthmetamorphosis.logic.service.HttpService;
@@ -22,6 +22,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,6 +55,15 @@ public class ProfileController {
     private Label availableFundsLabel;
     @FXML
     private Label portfolioWorthLabel;
+    @FXML
+    private VBox progressVBox;
+    @FXML
+    private HBox myStocksHBox;
+    @FXML
+    private VBox noStocksToDisplayVBox;
+    @FXML
+    private VBox noOrdersToDisplayVBox;
+
     private Stage profileStage;
     private int counter;
     private List<String> colors;
@@ -69,15 +79,33 @@ public class ProfileController {
         counter = 0;
         scheduledExecutorServices = new ArrayList<>();
         colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/Colors.txt"));
-        fillPieChartWithData();
-        fillStocksVBoxWithData();
-        fillOrdersVBox();
+
+        boolean isUserOwningStocks = UserSingleton.getInstance().getOrders().stream()
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
+                .entrySet().stream()
+                .noneMatch(entry -> entry.getValue() > 0);
+        if (UserSingleton.getInstance().getOrders().isEmpty()) {
+            noStocksToDisplayVBox.toFront();
+            noOrdersToDisplayVBox.toFront();
+            portfolioWorthLabel.setText("0$");
+        } else if (isUserOwningStocks) {
+            noStocksToDisplayVBox.toFront();
+            fillOrdersVBox();
+            ordersScrollPane.toFront();
+            portfolioWorthLabel.setText("0$");
+        } else {
+            progressVBox.toFront();
+            ordersScrollPane.toFront();
+            fillPieChartWithData();
+            fillStocksVBoxWithData();
+            fillOrdersVBox();
+        }
         setProfileStage();
         setProfilePicture();
 
         userNameLabel.setText(UserSingleton.getInstance().getUserName());
         registeredLabel.setText(UserSingleton.getInstance().getRegistered().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-        availableFundsLabel.setText(UserSingleton.getInstance().getBalance() + "$");
+        availableFundsLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
     }
 
     private void setProfileStage() {
@@ -100,7 +128,7 @@ public class ProfileController {
 
     private void fillStocksVBoxWithData() {
         UserSingleton.getInstance().getOrders().stream()
-                .filter(order -> order.getOrderType().equals(OrderType.SELL)  && order.getStockShares() > 0)
+                .filter(order -> order.getOrderType().equals(OrderType.SELL) && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
 
         Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
@@ -153,11 +181,12 @@ public class ProfileController {
         stockLabel.setText(entry.getKey());
         stockLabel.setId("stocksVBoxLabel");
         stockLabel.setStyle("-fx-text-fill: " + colors.get(i));
+        System.out.println("Label: " + colors.get(i));
         return stockLabel;
     }
 
     private void getPercentageScheduler() {
-        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service, portfolioWorthLabel);
+        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service, portfolioWorthLabel, myStocksHBox);
         ScheduledExecutorService percentageScheduler = Executors.newScheduledThreadPool(1);
         percentageScheduler.scheduleAtFixedRate(refresher, 0, 30, TimeUnit.SECONDS);
         scheduledExecutorServices.add(percentageScheduler);
@@ -196,7 +225,7 @@ public class ProfileController {
         Label sharesLabel = new Label();
         sharesLabel.setText(String.valueOf(order.getStockShares()));
         sharesLabel.setId("ordersVBoxLabel");
-        sharesLabel.setPadding(new Insets(0, 0, 0, 100));
+        sharesLabel.setPadding(new Insets(0, 0, 0, 80));
         sharesLabel.setPrefWidth(150);
         return sharesLabel;
     }
@@ -220,11 +249,15 @@ public class ProfileController {
 
     private void fillPieChartWithData() {
         UserSingleton.getInstance().getOrders().stream()
-                .filter(order -> order.getOrderType().equals(OrderType.SELL))
+                .filter(order -> order.getOrderType().equals(OrderType.SELL) && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
 
         Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
-                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)));
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
         int i = 0;
@@ -232,7 +265,10 @@ public class ProfileController {
             PieChart.Data data = new PieChart.Data(entry.getKey(), entry.getValue());
             pieChartData.add(data);
             pieChart.getData().add(data);
+            pieChart.setClockwise(true);
+            pieChart.setStartAngle(90);
             data.getNode().setStyle("-fx-background-color: " + colors.get(i));
+            System.out.println("Chart: " + colors.get(i));
             i++;
             if (i == colors.size()) {
                 i = 0;
@@ -263,6 +299,12 @@ public class ProfileController {
     void onMouseExitedOrdersScrollPane() {
         ordersScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         ordersScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    }
+
+    @FXML
+    void onLogOutClicked() {
+        UserSingleton.setUser(null);
+        profileStage.close();
     }
 
     public Stage getProfileStage() {

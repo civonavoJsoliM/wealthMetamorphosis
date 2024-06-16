@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" styleClass="borderPane" stylesheets="@../css/main-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.MainController">
+   <right>
+      <VBox prefHeight="900.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="0.0" prefWidth="220.0">
+               <children>
+                  <Button fx:id="profileButton" mnemonicParsing="false" onMouseClicked="#onProfileClicked" prefWidth="250.0" text="Profile" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate Bold" size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox fx:id="stockSymbolAndPriceVBox" prefHeight="105.0" prefWidth="220.0" spacing="10.0" visible="false">
+               <children>
+                  <Label fx:id="stockLabel" text="Stock" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="51.0" />
+                     </font>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label fx:id="priceLabel" text="Price" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="25.0" />
+                     </font>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox fx:id="tradingVBox" prefHeight="865.0" prefWidth="220.0">
+               <children>
+                  <VBox fx:id="buyVBox" prefHeight="135.0" prefWidth="253.0" spacing="20.0" visible="false">
+                     <children>
+                        <Label fx:id="invalidInputBuyLabel" text="Please enter valid input!" textFill="RED" visible="false">
+                           <font>
+                              <Font name="Copperplate" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="-15.0" left="82.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="13.0" prefWidth="214.0">
+                           <children>
+                              <Label text="Shares: " textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate Light" size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="buySharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToBuy" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
+                                 <font>
+                                    <Font name="Copperplate Light" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                        </HBox>
+                        <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyButtonClicked" prefHeight="45.0" prefWidth="464.0" text="BUY" textFill="WHITE">
+                           <font>
+                              <Font name="Copperplate Bold" size="25.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+                  <VBox fx:id="sellVBox" prefHeight="231.0" prefWidth="250.0" spacing="20.0" visible="false">
+                     <children>
+                        <HBox prefHeight="12.0" prefWidth="217.0">
+                           <children>
+                              <Label text="Owned shares: " textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate Light" size="18.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Label fx:id="ownedSharesLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="-10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Label fx:id="invalidInputSellLabel" text="Please enter valid input!" textFill="RED" visible="false">
+                           <font>
+                              <Font name="Copperplate" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="-15.0" left="82.0" />
+                           </VBox.margin>
+                        </Label>
+                        <HBox prefHeight="14.0" prefWidth="217.0">
+                           <children>
+                              <Label text="Shares: " textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate Light" size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="sellSharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToSell" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
+                                 <font>
+                                    <Font name="Copperplate Light" size="15.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                        </HBox>
+                        <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#onSellButtonClicked" prefHeight="27.0" prefWidth="433.0" text="SELL">
+                           <font>
+                              <Font name="Copperplate Bold" size="25.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="sellAllButton" mnemonicParsing="false" onMouseClicked="#onSellAllButtonClicked" prefHeight="45.0" prefWidth="253.0" text="Sell All">
+                           <font>
+                              <Font name="Copperplate Bold" size="25.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </VBox>
+            <HBox fx:id="balanceHBox" prefHeight="100.0" prefWidth="200.0" visible="false">
+               <children>
+                  <Label text="Balance: " textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="balanceLabel" text="Label" textFill="WHITE">
+                     <font>
+                        <Font name="Copperplate" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="20.0" top="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </right>
+   <center>
+      <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="placeholderLabel" text="Choose stock to display chart!" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate Light" size="15.0" />
+               </font></Label>
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="10.0" right="10.0" top="1.0" />
+         </padding>
+      </VBox>
+   </center>
+   <left>
+      <VBox fx:id="stocksAndTextFieldVBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <TextField fx:id="searchTextField" minHeight="-Infinity" onKeyTyped="#typingIntoSearchTextField" prefHeight="35.0" promptText="Search" styleClass="textField">
+               <font>
+                  <Font name="Copperplate Light" size="20.0" />
+               </font></TextField>
+            <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" onMouseEntered="#onMouseEnteredStocksScrollPane" onMouseExited="#onMouseExitedStocksScrollPane" prefHeight="870.0" prefWidth="200.0" style="-fx-background-color: transparent;" vbarPolicy="NEVER">
+               <content>
+                  <VBox fx:id="stocksVBox" alignment="TOP_CENTER" minWidth="-Infinity" prefHeight="868.0" prefWidth="177.0" style="-fx-background-color: transparent;" />
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </left>
+</BorderPane>

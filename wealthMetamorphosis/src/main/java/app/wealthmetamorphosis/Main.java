@@ -3,6 +3,7 @@ package app.wealthmetamorphosis;
 import app.wealthmetamorphosis.data.DBConnection;
 import app.wealthmetamorphosis.data.singleton.DBConnectionSingleton;
 import app.wealthmetamorphosis.logic.controller.MainController;
+import app.wealthmetamorphosis.logic.db.DBInserter;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -18,7 +19,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         DBConnection dbConnection = new DBConnection("jdbc:mysql://localhost/wealthMetamorphosis", "root", "password");
         DBConnectionSingleton.setDbConnection(dbConnection);
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/app/wealthmetamorphosis/view/main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setTitle("wealthMetamorphosis");
         MainController controller = fxmlLoader.getController();

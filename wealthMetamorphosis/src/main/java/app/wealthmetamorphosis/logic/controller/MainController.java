@@ -2,18 +2,12 @@ package app.wealthmetamorphosis.logic.controller;
 
 import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.*;
-import app.wealthmetamorphosis.data.singleton.DBConnectionSingleton;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.data.stock.Stock;
 import app.wealthmetamorphosis.logic.*;
-import app.wealthmetamorphosis.logic.db.DBReader;
-import app.wealthmetamorphosis.logic.db.ResultSetToList;
 import app.wealthmetamorphosis.logic.refresher.RealTimeChartRefresher;
 import app.wealthmetamorphosis.logic.refresher.RealTimeStockPriceRefresher;
-import app.wealthmetamorphosis.logic.service.HttpService;
-import app.wealthmetamorphosis.logic.service.OrderService;
-import app.wealthmetamorphosis.logic.service.TradingService;
-import app.wealthmetamorphosis.logic.service.UserService;
+import app.wealthmetamorphosis.logic.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,10 +19,7 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
@@ -37,7 +28,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
@@ -45,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 public class MainController {
@@ -75,11 +66,23 @@ public class MainController {
     @FXML
     private VBox tradingVBox;
     @FXML
+    private VBox stockSymbolAndPriceVBox;
+    @FXML
     private VBox sellVBox;
+    @FXML
+    private VBox buyVBox;
     @FXML
     private Label ownedSharesLabel;
     @FXML
     private Button profileButton;
+    @FXML
+    private Label invalidInputBuyLabel;
+    @FXML
+    private Label invalidInputSellLabel;
+    @FXML
+    private Label balanceLabel;
+    @FXML
+    private HBox balanceHBox;
 
     private Stage stage;
     private List<String> stockSymbols;
@@ -88,6 +91,7 @@ public class MainController {
     private User user;
     private TradingService tradingService;
     private Checker checker;
+    private Validator validator;
     private HttpService httpService;
     private FileReader fileReader;
     private AreaChart<String, Number> chart;
@@ -101,7 +105,8 @@ public class MainController {
     private CategoryAxis xAxis;
     private NumberAxis yAxis;
     private Line line;
-    private Button activeButton;
+    private Button activeStockButton;
+    private Button activeTimeIntervalButton;
     private HBox timeIntervalsHBox;
     private List<HBox> stocksHBoxes;
 
@@ -112,9 +117,11 @@ public class MainController {
         counter = 0;
         fileReader = new FileReader();
         httpService = new HttpService(fileReader, counter);
-        tradingService = new TradingService(checker, user, priceLabel, stockLabel, buySharesTextField, sellSharesTextField);
+        tradingService = new TradingService(priceLabel, stockLabel, buySharesTextField, sellSharesTextField);
         checker = new Checker();
+        validator = new Validator();
 
+        /*
         // refactor ->
         ResultSetToList<Order> rstl = new OrderService();
         DBReader<Order> reader = new DBReader<>(rstl, DBConnectionSingleton.getInstance());
@@ -130,10 +137,11 @@ public class MainController {
         UserSingleton.setUser(user);
         setSharesOnSellOrdersToNegative();
         // <- refactor
+         */
 
         getChart();
         stocksHBoxes = new ArrayList<>();
-        activeButton = new Button();
+        activeStockButton = new Button();
 
         stockSymbols = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/StockSymbols.txt");
         stockSymbols.forEach(stockSymbol -> {
@@ -147,9 +155,11 @@ public class MainController {
         stocksVBox.getChildren().addAll(stocksHBoxes);
         stocksVBox.setId("stocksVBox");
 
-        setOwnedStockCircleVisible();
-        initializeStockPriceRefresher();
-        initializeChartRefresher();
+        JSONObject jsonObject = new JSONObject();
+        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(httpService, jsonObject);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        realTimeChartRefresher = new RealTimeChartRefresher(httpService, chart, objectMapper);
         getChartDataLabel();
     }
 
@@ -162,13 +172,19 @@ public class MainController {
         stockButton.setId("stockButton");
         stockButton.setPrefWidth(stocksVBox.getPrefWidth());
         stockButton.setOnMouseClicked(event -> {
+            setStockSymbolAndPriceVBoxVisibility();
+            stockLabel.setText(stockSymbol);
             Optional<Button> button = stocks.stream().map(Stock::getButton).filter(node -> node.isFocused() || node.isPressed()).findAny();
-            if (button.isEmpty() || !activeButton.equals(stockButton)) {
+            if (/*button.isEmpty() ||*/ !activeStockButton.equals(stockButton)) {
                 fillChartWithData(stockSymbol, stockButton);
+                //}
+                //if (UserSingleton.getInstance() != null) {
+                setTradingVBoxVisibility(stockSymbol);
+                //}
+                styleNotPressedOrUnfocusedStockButtons();
+                stylePressedOrFocusedStockButtons();
+                clearTextFieldsAndWarningLabels();
             }
-            setSellVBoxVisibility(stockSymbol);
-            stylePressedOrFocusedStockButtons();
-            styleNotPressedOrUnfocusedStockButtons();
         });
         stockButton.setOnMouseEntered(event -> {
             for (HBox hBox : stocksHBoxes) {
@@ -193,17 +209,28 @@ public class MainController {
         return stockButton;
     }
 
-    private void styleNotPressedOrUnfocusedStockButtons() {
+    private void setStockSymbolAndPriceVBoxVisibility() {
+        if (!stockSymbolAndPriceVBox.isVisible()) {
+            stockSymbolAndPriceVBox.setVisible(true);
+        }
+    }
+
+    private void clearTextFieldsAndWarningLabels() {
+        buySharesTextField.clear();
+        sellSharesTextField.clear();
+        invalidInputBuyLabel.setVisible(false);
+        invalidInputSellLabel.setVisible(false);
+    }
+
+    private void stylePressedOrFocusedStockButtons() {
         stocksHBoxes.stream().filter(hb -> hb.getChildren().getLast().isFocused() || hb.getChildren().getLast().isPressed()).forEach(hb -> {
             hb.setStyle("-fx-background-color: white");
             hb.getChildren().getFirst().setStyle("-fx-fill: #212324; -fx-stroke: #212324;");
             hb.getChildren().getLast().setStyle("-fx-text-fill: #212324");
-            Button bt = (Button) hb.getChildren().getLast();
-            System.out.println(bt.getText());
         });
     }
 
-    private void stylePressedOrFocusedStockButtons() {
+    private void styleNotPressedOrUnfocusedStockButtons() {
         stocksHBoxes.stream().filter(hb -> !hb.getChildren().getLast().isFocused() || !hb.getChildren().getLast().isPressed()).forEach(hb -> {
             hb.setStyle("-fx-background-color: #212324");
             hb.getChildren().getFirst().setStyle("-fx-fill: white; -fx-stroke: white;");
@@ -211,7 +238,16 @@ public class MainController {
         });
     }
 
+    private void setTradingVBoxVisibility(String stockSymbol) {
+        //buyVBox.setVisible(true);
+        if (UserSingleton.getInstance() != null) {
+            buyVBox.setVisible(true);
+            setSellVBoxVisibility(stockSymbol);
+        }
+    }
+
     private void setSellVBoxVisibility(String stockSymbol) {
+        //if (UserSingleton.getInstance().getOrders() != null) {
         double ownedShares = getOwnedStockShares(stockSymbol);
         if (ownedShares > 0) {
             sellVBox.setVisible(true);
@@ -219,11 +255,12 @@ public class MainController {
         } else {
             sellVBox.setVisible(false);
         }
+        //}
     }
 
     private void fillChartWithData(String stockSymbol, Button stockButton) {
-        activeButton = stockButton;
-        arrangeChartWindow(stockSymbol);
+        activeStockButton = stockButton;
+        arrangeChartWindow();
         try {
             XYChart.Series<String, Number> series = getChartSeries(stockSymbol, "1min", "390");
             chart.getData().add(series);
@@ -239,11 +276,10 @@ public class MainController {
         timeIntervalsHBox.getChildren().stream().map(node -> (Button) node).forEach(bt -> bt.getStylesheets().clear());
         Button timeIntervalButton = (Button) timeIntervalsHBox.getChildren().getFirst();
         addStyleSheetToButton(timeIntervalButton);
+        activeTimeIntervalButton = timeIntervalButton;
     }
 
-    private void arrangeChartWindow(String stockSymbol) {
-        tradingVBox.setVisible(true);
-        stockLabel.setText(stockSymbol);
+    private void arrangeChartWindow() {
         removePlaceholderLabel();
         if (chartsVBox.getChildren().isEmpty()) {
             VBox vBoxChartWindow = getChartWindowVBox(chart);
@@ -271,34 +307,25 @@ public class MainController {
     }
 
     private void setOwnedStockCircleVisible() {
-        Map<String, Double> map = UserSingleton.getInstance().getOrders().stream()
-                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() > 0)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        //if (UserSingleton.getInstance().getOrders() != null) {
+            setSharesOnSellOrdersToNegative();
 
-        for (String stockSymbol : map.keySet()) {
-            for (HBox hBox : stocksHBoxes) {
-                Button button = (Button) hBox.getChildren().getLast();
-                if (button.getText().equals(stockSymbol)) {
-                    Circle circle = (Circle) hBox.getChildren().getFirst();
-                    circle.setVisible(true);
+            Map<String, Double> map = UserSingleton.getInstance().getOrders().stream()
+                    .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
+                    .entrySet().stream()
+                    .filter(entry -> entry.getValue() > 0)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            for (String stockSymbol : map.keySet()) {
+                for (HBox hBox : stocksHBoxes) {
+                    Button button = (Button) hBox.getChildren().getLast();
+                    if (button.getText().equals(stockSymbol)) {
+                        Circle circle = (Circle) hBox.getChildren().getFirst();
+                        circle.setVisible(true);
+                    }
                 }
             }
-        }
-    }
-
-    private void initializeChartRefresher() {
-        chartSchedule = Executors.newScheduledThreadPool(1);
-        ObjectMapper objectMapper = new ObjectMapper();
-        realTimeChartRefresher = new RealTimeChartRefresher(httpService, chart, objectMapper);
-    }
-
-    private void initializeStockPriceRefresher() {
-        stockPriceScheduler = Executors.newScheduledThreadPool(1);
-        JSONObject jsonObject = new JSONObject();
-        realTimeStockPriceRefresher = new RealTimeStockPriceRefresher(httpService, jsonObject);
-        realTimeStockPriceRefresher.setLabel(priceLabel);
+        //}
     }
 
     private void getChartDataLabel() {
@@ -310,19 +337,60 @@ public class MainController {
 
     @FXML
     void onProfileClicked() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("profile-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        ProfileController controller = fxmlLoader.getController();
-        Stage profileStage = controller.getProfileStage();
-        setUpProfileStage(profileStage, scene);
-        profileStage.show();
+        FXMLLoader fxmlLoader;
+        if (UserSingleton.getInstance() == null) {
+            fxmlLoader = new FXMLLoader(Main.class.getResource("/app/wealthmetamorphosis/view/login-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            LoginController controller = fxmlLoader.getController();
+            controller.getLoginStage().setScene(scene);
+            controller.getLoginStage().initOwner(stage);
+            controller.getLoginStage().initModality(Modality.WINDOW_MODAL);
+            controller.getLoginStage().initStyle(StageStyle.UTILITY);
+            controller.getLoginStage().showAndWait();
+            if (UserSingleton.getInstance() != null) {
+                setOwnedStockCircleVisible();
+                balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
+                balanceHBox.setVisible(true);
+                //if (stocks.stream().map(Stock::getButton).anyMatch(bt -> bt.isPressed() || bt.isFocused())) {
+                if (stocks.stream().map(Stock::getButton).anyMatch(button -> button.equals(activeStockButton))) {
+                    buyVBox.setVisible(true);
+                    setSellVBoxVisibility(activeStockButton.getText());
+                    //sellVBox.setVisible(false);
+                }
+                /*List<Button> stockButtons = stocks.stream().map(Stock::getButton).toList();
+                if (UserSingleton.getInstance().getOrders() != null && stockButtons.contains(activeStockButton)) {
+                    setTradingVBoxVisibility(activeStockButton.getText());
+                } */
+            }
+        } else {
+            fxmlLoader = new FXMLLoader(Main.class.getResource("/app/wealthmetamorphosis/view/profile-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            ProfileController controller = fxmlLoader.getController();
+            Stage profileStage = controller.getProfileStage();
+            setUpProfileStage(profileStage, scene);
+            profileStage.showAndWait();
+            if (UserSingleton.getInstance() == null) {
+                setOwnedStockCircleNotVisible();
+                balanceHBox.setVisible(false);
+                buyVBox.setVisible(false);
+                sellVBox.setVisible(false);
+            }
+        }
     }
+
+    private void setOwnedStockCircleNotVisible() {
+        for (HBox hBox : stocksHBoxes) {
+            Circle circle = (Circle) hBox.getChildren().getFirst();
+            circle.setVisible(false);
+        }
+    }
+
 
     private void setUpProfileStage(Stage profileStage, Scene scene) {
         profileStage.setScene(scene);
         profileStage.initOwner(stage);
         profileStage.initModality(Modality.WINDOW_MODAL);
-        profileStage.initStyle(StageStyle.UTILITY);
+        profileStage.initStyle(StageStyle.UNIFIED);
     }
 
     @FXML
@@ -348,22 +416,72 @@ public class MainController {
     }
 
     @FXML
-    void onBuyClicked() {
-        tradingService.placeOrder(OrderType.BUY);
-        makeTrade();
+    void enteringSharesToBuy() {
+        UnaryOperator<TextFormatter.Change> unaryOperator = validator.validateIfInputNumber();
+        TextFormatter<String> formatter = new TextFormatter<>(unaryOperator);
+        buySharesTextField.setTextFormatter(formatter);
+    }
+
+    @FXML
+    void onBuyButtonClicked() {
+        if (checker.isNumberValid(buySharesTextField) &&
+                checker.isNumberBiggerThenZero(buySharesTextField) &&
+                checker.isBalanceEnough(Double.parseDouble(priceLabel.getText().substring(0, priceLabel.getText().length() - 1)) *
+                        Double.parseDouble(buySharesTextField.getText()))) {
+
+            tradingService.placeBuyOrder();
+            setSharesOnSellOrdersToNegative();
+            Optional<Stock> chosenStock = stocks.stream().filter(stk -> stk.getSymbol().equals(stockLabel.getText())).findFirst();
+            double ownedStockShares = getOwnedStockShares(stockLabel.getText());
+            chosenStock.ifPresent(value -> setSellVBoxAndStockDotVisibility(value, ownedStockShares));
+            balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
+            invalidInputBuyLabel.setVisible(false);
+            invalidInputSellLabel.setVisible(false);
+
+        } else {
+            invalidInputBuyLabel.setVisible(true);
+        }
+        buySharesTextField.clear();
+    }
+
+    @FXML
+    void enteringSharesToSell() {
+        UnaryOperator<TextFormatter.Change> unaryOperator = validator.validateIfInputNumber();
+        TextFormatter<String> formatter = new TextFormatter<>(unaryOperator);
+        sellSharesTextField.setTextFormatter(formatter);
     }
 
     @FXML
     void onSellButtonClicked() {
-        tradingService.placeOrder(OrderType.SELL);
-        makeTrade();
+        if (checker.isNumberValid(sellSharesTextField) &&
+                checker.isNumberBiggerThenZero(sellSharesTextField) &&
+                checker.areEnoughStockSharesToBeSold(stockLabel.getText(), Double.parseDouble(sellSharesTextField.getText()))) {
+
+            tradingService.placeSellOrder(sellSharesTextField);
+            setSharesOnSellOrdersToNegative();
+            Optional<Stock> chosenStock = stocks.stream().filter(stk -> stk.getSymbol().equals(stockLabel.getText())).findFirst();
+            double ownedStockShares = getOwnedStockShares(stockLabel.getText());
+            chosenStock.ifPresent(value -> setSellVBoxAndStockDotVisibility(value, ownedStockShares));
+            balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
+            invalidInputSellLabel.setVisible(false);
+            invalidInputBuyLabel.setVisible(false);
+
+        } else {
+            invalidInputSellLabel.setVisible(true);
+        }
+        sellSharesTextField.clear();
     }
 
-    private void makeTrade() {
+    @FXML
+    void onSellAllButtonClicked() {
+        tradingService.placeSellOrder();
         setSharesOnSellOrdersToNegative();
         Optional<Stock> chosenStock = stocks.stream().filter(stk -> stk.getSymbol().equals(stockLabel.getText())).findFirst();
         double ownedStockShares = getOwnedStockShares(stockLabel.getText());
         chosenStock.ifPresent(value -> setSellVBoxAndStockDotVisibility(value, ownedStockShares));
+        balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
+        invalidInputSellLabel.setVisible(false);
+        invalidInputBuyLabel.setVisible(false);
     }
 
     private void setSharesOnSellOrdersToNegative() {
@@ -385,14 +503,14 @@ public class MainController {
             for (Node hBoxChildren : hBox.getChildren()) {
                 Circle circle = (Circle) hBox.getChildren().getFirst();
                 if (hBoxChildren.equals(stock.getButton())) {
-                    changeVisibility(ownedShares, circle);
+                    changeVisibilityOfOwnedSharesCircle(ownedShares, circle);
                 }
             }
         }
     }
 
-    private void changeVisibility(double ownedShares, Circle circle) {
-        if (ownedShares < 1) {
+    private void changeVisibilityOfOwnedSharesCircle(double ownedShares, Circle circle) {
+        if (ownedShares <= 0) {
             sellVBox.setVisible(false);
             circle.setVisible(false);
         } else {
@@ -435,6 +553,7 @@ public class MainController {
     }
 
     private HBox getTimeIntervalsHBox(AreaChart<String, Number> chart) {
+        activeTimeIntervalButton = new Button();
         timeIntervalsHBox = new HBox();
         timeIntervalsHBox.setId("timeIntervalsHBox");
         List<Button> timeIntervalButtons = new ArrayList<>();
@@ -443,31 +562,35 @@ public class MainController {
             Button timeIntervalButton = new Button();
             timeIntervalButton.setId("timeIntervalButton");
             timeIntervalButton.setText(timeInterval.split(" ")[0]);
-            if (timeIntervalButton.getText().equals("1D")) {
+            /*if (timeIntervalButton.getText().equals("1D")) {
                 addStyleSheetToButton(timeIntervalButton);
-            }
+            } */
             timeIntervalButtons.add(timeIntervalButton);
             timeIntervalButton.setOnMouseClicked(event -> {
-                //if (!timeIntervalButton.getStylesheets().contains(Objects.requireNonNull(
-                //getClass().getResource("/app/wealthmetamorphosis/css/timeIntervalButton-whenPressed.css")).toExternalForm())) {
-                if (!timeIntervalButton.getStylesheets().isEmpty()) {
-                    addStyleSheetToButton(timeIntervalButton);
-                }
-                String outputSize = getOutputSize(timeInterval);
-                try {
-                    XYChart.Series<String, Number> series = getChartSeries(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
-                    chart.getData().clear();
-                    chart.getData().add(series);
+                Optional<Button> button = timeIntervalButtons.stream().filter(bt -> bt.isFocused() || bt.isPressed()).findAny();
+                if (/*button.isEmpty() ||*/ !activeTimeIntervalButton.equals(timeIntervalButton)) {
+                    activeTimeIntervalButton = timeIntervalButton;
+                    if (timeIntervalButton.getStylesheets().isEmpty()) {
+                        addStyleSheetToButton(timeIntervalButton);
+                    }
+                    String outputSize = getOutputSize(timeInterval);
+                    try {
+                        XYChart.Series<String, Number> series = getChartSeries(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
+                        //XYChart.Series<String, Number> series = getChartSeries(activeButton.getText(), timeInterval.split(" ")[1], outputSize);
+                        chart.getData().clear();
+                        chart.getData().add(series);
 
-                    // restart refresher
-                    chartSchedule.shutdown();
-                    chartSchedule = Executors.newScheduledThreadPool(1);
-                    refreshChart(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
+                        // restart refresher
+                        chartSchedule.shutdown();
+                        chartSchedule = Executors.newScheduledThreadPool(1);
+                        refreshChart(stockLabel.getText(), timeInterval.split(" ")[1], outputSize);
+                        //refreshChart(activeButton.getText(), timeInterval.split(" ")[1], outputSize);
 
-                    // clear stylesheets for not-pressed buttons
-                    timeIntervalButtons.stream().filter(button -> !button.equals(timeIntervalButton)).forEach(button -> button.getStylesheets().clear());
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                        // clear stylesheets for not-pressed buttons
+                        timeIntervalButtons.stream().filter(bt -> !bt.equals(timeIntervalButton)).forEach(bt -> bt.getStylesheets().clear());
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             timeIntervalsHBox.getChildren().add(timeIntervalButton);
@@ -477,7 +600,7 @@ public class MainController {
 
     private void addStyleSheetToButton(Button button) {
         button.getStylesheets().add(Objects.requireNonNull(
-                getClass().getResource("/app/wealthmetamorphosis/css/timeIntervalButton-whenPressed.css")).toExternalForm());
+                getClass().getResource("/app/wealthmetamorphosis/css/timeIntervalButton-whenPressed-layout.css")).toExternalForm());
     }
 
     private String getOutputSize(String timeInterval) {
@@ -497,7 +620,7 @@ public class MainController {
             line.setStartY(yMax + yAxis.getBaselineOffset());
             yMin = yAxis.getDisplayPosition(yAxis.getLowerBound());
             line.setEndY(yMin + yAxis.getBaselineOffset());
-            chart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/wealthmetamorphosis/css/chart-hover.css")).toExternalForm());
+            chart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/app/wealthmetamorphosis/css/chart-hover-layout.css")).toExternalForm());
         });
         stackPane.setOnMouseExited(event -> {
             chartDataLabel.setVisible(false);
@@ -561,11 +684,20 @@ public class MainController {
     }
 
     private void refreshStockPrice() {
+        if (stockPriceScheduler != null) {
+            stockPriceScheduler.shutdown();
+        }
+        stockPriceScheduler = Executors.newScheduledThreadPool(1);
+        realTimeStockPriceRefresher.setLabel(priceLabel);
         realTimeStockPriceRefresher.setStockSymbol(stockLabel.getText());
         stockPriceScheduler.scheduleAtFixedRate(realTimeStockPriceRefresher, 0, 30, TimeUnit.SECONDS);
     }
 
     private void refreshChart(String button, String interval, String outputSize) {
+        if (chartSchedule != null) {
+            chartSchedule.shutdown();
+        }
+        chartSchedule = Executors.newScheduledThreadPool(1);
         realTimeChartRefresher.setParameters(button, interval, outputSize);
         chartSchedule.scheduleAtFixedRate(realTimeChartRefresher, 0, 30, TimeUnit.SECONDS);
     }

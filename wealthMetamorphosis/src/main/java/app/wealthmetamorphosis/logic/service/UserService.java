@@ -18,7 +18,8 @@ public class UserService implements ResultSetToList<User> {
             String userName = resultSet.getString("user_name");
             String password = resultSet.getString("user_password");
             LocalDateTime registered = resultSet.getTimestamp("registered").toLocalDateTime();
-            users.add(new User(userId, userName, password, registered));
+            double balance = resultSet.getDouble("balance");
+            users.add(new User(userId, userName, password, registered, balance));
         }
         return users;
     }

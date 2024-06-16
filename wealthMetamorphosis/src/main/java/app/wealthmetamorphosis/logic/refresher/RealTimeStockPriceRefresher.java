@@ -14,6 +14,7 @@ public class RealTimeStockPriceRefresher implements Runnable {
     private String stockSymbol;
     private Label label;
     private JSONObject jsonObject;
+    private int i = 0;
 
     public RealTimeStockPriceRefresher(HttpService httpService, JSONObject jsonObject) {
         this.httpService = httpService;
@@ -24,10 +25,12 @@ public class RealTimeStockPriceRefresher implements Runnable {
     public void run() {
         try {
             HttpResponse<String> response = httpService.getRealTimeStockPrice(stockSymbol);
+            System.out.println(response.body());
             double currentPrice = getPriceFromJSONObject(response);
+            System.out.println(currentPrice);
             if (label != null) {
                 setNewPrice(currentPrice);
-                System.out.println("Refresh price of: " + stockSymbol);
+                System.out.println("Refresh price of: " + stockSymbol + ": " + ++i);
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -35,7 +38,7 @@ public class RealTimeStockPriceRefresher implements Runnable {
     }
 
     private double getPriceFromJSONObject(HttpResponse<String> response) {
-        jsonObject = new JSONObject(response.body());
+        JSONObject jsonObject = new JSONObject(response.body());
         return Double.parseDouble(jsonObject.getString("price"));
     }
 

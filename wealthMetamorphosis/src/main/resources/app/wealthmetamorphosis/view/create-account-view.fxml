@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: #212324;" stylesheets="@../css/create-account-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.CreateAccountController">
+   <top>
+      <VBox alignment="BOTTOM_CENTER" prefHeight="65.0" prefWidth="400.0">
+         <children>
+            <Label text="Create Account" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="40.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Label>
+            <Line endX="450.0" stroke="WHITE" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox alignment="CENTER_LEFT" prefHeight="264.0" prefWidth="450.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Username" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="2.0" />
+               </VBox.margin>
+            </Label>
+            <TextField fx:id="usernameTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <font>
+                  <Font name="Copperplate Light" size="16.0" />
+               </font>
+            </TextField>
+            <Label fx:id="invalidUsernameLabel" text="Invalid username!" textFill="RED" visible="false">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Copperplate" size="10.0" />
+               </font>
+            </Label>
+            <Label text="Password" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="2.0" />
+               </VBox.margin>
+            </Label>
+            <PasswordField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
+               <font>
+                  <Font name="Copperplate Light" size="16.0" />
+               </font>
+            </PasswordField>
+            <Label fx:id="invalidPasswordLabel" text="Invalid password!" textFill="RED" visible="false">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Copperplate" size="10.0" />
+               </font>
+            </Label>
+            <Label text="Confirm password" textFill="WHITE">
+               <font>
+                  <Font name="Copperplate" size="16.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="2.0" />
+               </VBox.margin>
+            </Label>
+            <PasswordField fx:id="confirmPasswordField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
+               <font>
+                  <Font name="Copperplate Light" size="16.0" />
+               </font>
+            </PasswordField>
+            <Label fx:id="invalidConfirmPasswordField" text="Invalid password!" textFill="RED" visible="false">
+               <font>
+                  <Font name="Copperplate" size="10.0" />
+               </font>
+            </Label>
+         </children>
+         <BorderPane.margin>
+            <Insets left="75.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <Button fx:id="createButton" mnemonicParsing="false" onMouseClicked="#onCreateClicked" prefHeight="50.0" prefWidth="450.0" text="Create" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="Copperplate" size="25.0" />
+         </font>
+      </Button>
+   </bottom>
+</BorderPane>

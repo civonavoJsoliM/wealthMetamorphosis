@@ -14,11 +14,12 @@ public class User {
     public User() {
     }
 
-    public User(String userId, String userName, String password, LocalDateTime registered) {
+    public User(String userId, String userName, String password, LocalDateTime registered, double balance) {
         this.userId = userId;
         this.userName = userName;
         this.password = password;
         this.registered = registered;
+        this.balance = balance;
     }
 
     public String getUserId() {
