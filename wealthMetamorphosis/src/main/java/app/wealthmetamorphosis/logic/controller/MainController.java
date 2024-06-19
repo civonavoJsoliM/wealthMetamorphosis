@@ -83,6 +83,10 @@ public class MainController {
     private Label balanceLabel;
     @FXML
     private HBox balanceHBox;
+    @FXML
+    private Label totalCostLabel;
+    @FXML
+    private Label totalLabel;
 
     private Stage stage;
     private List<String> stockSymbols;
@@ -220,6 +224,8 @@ public class MainController {
         sellSharesTextField.clear();
         invalidInputBuyLabel.setVisible(false);
         invalidInputSellLabel.setVisible(false);
+        totalCostLabel.setText("0$");
+        totalLabel.setText("0$");
     }
 
     private void stylePressedOrFocusedStockButtons() {
@@ -423,6 +429,16 @@ public class MainController {
     }
 
     @FXML
+    void enteredSharesToBuy() {
+        if (!buySharesTextField.getText().isBlank()) {
+            String totalCost = String.valueOf(Math.round(Double.parseDouble(priceLabel.getText().substring(0, priceLabel.getText().length() - 1)) * Double.parseDouble(buySharesTextField.getText())));
+            totalCostLabel.setText(totalCost + "$");
+        } else {
+            totalCostLabel.setText("0$");
+        }
+    }
+
+    @FXML
     void onBuyButtonClicked() {
         if (checker.isNumberValid(buySharesTextField) &&
                 checker.isNumberBiggerThenZero(buySharesTextField) &&
@@ -437,7 +453,7 @@ public class MainController {
             balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
             invalidInputBuyLabel.setVisible(false);
             invalidInputSellLabel.setVisible(false);
-
+            totalCostLabel.setText("0$");
         } else {
             invalidInputBuyLabel.setVisible(true);
         }
@@ -449,6 +465,16 @@ public class MainController {
         UnaryOperator<TextFormatter.Change> unaryOperator = validator.validateIfInputNumber();
         TextFormatter<String> formatter = new TextFormatter<>(unaryOperator);
         sellSharesTextField.setTextFormatter(formatter);
+    }
+
+    @FXML
+    void enteredSharesToSell() {
+        if (!sellSharesTextField.getText().isBlank()) {
+            String total = String.valueOf(Math.round(Double.parseDouble(priceLabel.getText().substring(0, priceLabel.getText().length() - 1)) * Double.parseDouble(sellSharesTextField.getText())));
+            totalLabel.setText(total + "$");
+        } else {
+            totalLabel.setText("0$");
+        }
     }
 
     @FXML
@@ -465,7 +491,7 @@ public class MainController {
             balanceLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
             invalidInputSellLabel.setVisible(false);
             invalidInputBuyLabel.setVisible(false);
-
+            totalLabel.setText("0$");
         } else {
             invalidInputSellLabel.setVisible(true);
         }

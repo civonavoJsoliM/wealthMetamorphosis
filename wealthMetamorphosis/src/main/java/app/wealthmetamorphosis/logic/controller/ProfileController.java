@@ -2,7 +2,6 @@ package app.wealthmetamorphosis.logic.controller;
 
 import app.wealthmetamorphosis.data.*;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
-import app.wealthmetamorphosis.data.stock.Stock;
 import app.wealthmetamorphosis.logic.FileReader;
 import app.wealthmetamorphosis.logic.refresher.PercentageRefresher;
 import app.wealthmetamorphosis.logic.service.HttpService;
@@ -103,7 +102,7 @@ public class ProfileController {
         setProfileStage();
         setProfilePicture();
 
-        userNameLabel.setText(UserSingleton.getInstance().getUserName());
+        userNameLabel.setText(UserSingleton.getInstance().getUsername());
         registeredLabel.setText(UserSingleton.getInstance().getRegistered().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         availableFundsLabel.setText(Math.round(UserSingleton.getInstance().getBalance()) + "$");
     }
@@ -248,6 +247,18 @@ public class ProfileController {
     }
 
     private void fillPieChartWithData() {
+
+        // implement this ->
+        UserSingleton.getInstance().getOrders().stream()
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(order -> {
+                            if (order.getOrderType().equals(OrderType.SELL)) {
+                                return order.getStockShares() * -1;
+                            }
+                            return order.getStockShares();
+                        })
+                ));
+        // <- implement this
+
         UserSingleton.getInstance().getOrders().stream()
                 .filter(order -> order.getOrderType().equals(OrderType.SELL) && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));

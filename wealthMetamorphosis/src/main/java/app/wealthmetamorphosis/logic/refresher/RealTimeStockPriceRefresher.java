@@ -15,6 +15,7 @@ public class RealTimeStockPriceRefresher implements Runnable {
     private Label label;
     private JSONObject jsonObject;
     private int i = 0;
+    private double oldCurrentPrice;
 
     public RealTimeStockPriceRefresher(HttpService httpService, JSONObject jsonObject) {
         this.httpService = httpService;
@@ -23,13 +24,14 @@ public class RealTimeStockPriceRefresher implements Runnable {
 
     @Override
     public void run() {
+
         try {
             HttpResponse<String> response = httpService.getRealTimeStockPrice(stockSymbol);
             System.out.println(response.body());
-            double currentPrice = getPriceFromJSONObject(response);
-            System.out.println(currentPrice);
+            double newCurrentPrice = getPriceFromJSONObject(response);
+            System.out.println(newCurrentPrice);
             if (label != null) {
-                setNewPrice(currentPrice);
+                setNewPrice(newCurrentPrice, oldCurrentPrice);
                 System.out.println("Refresh price of: " + stockSymbol + ": " + ++i);
             }
         } catch (IOException | InterruptedException e) {
@@ -42,13 +44,27 @@ public class RealTimeStockPriceRefresher implements Runnable {
         return Double.parseDouble(jsonObject.getString("price"));
     }
 
-    private void setNewPrice(double currentPrice) {
+    private void setNewPrice(double newCurrentPrice, double oldCurrentPrice) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                label.setText((currentPrice) + "$");
+                label.setText((newCurrentPrice) + "$");
+                if (oldCurrentPrice != 0) {
+                    if (oldCurrentPrice > newCurrentPrice) {
+                        label.setStyle("-fx-background-color: red");
+                    } else if (oldCurrentPrice < newCurrentPrice) {
+                        label.setStyle("-fx-background-color: green");
+                    } else {
+                        label.setStyle("-fx-background-color: transparent");
+                    }
+                }
+                setOldPrice(oldCurrentPrice, newCurrentPrice);
             }
         });
+    }
+
+    private void setOldPrice(double oldCurrentPrice, double newCurrentPrice) {
+        oldCurrentPrice = newCurrentPrice;
     }
 
     public void setLabel(Label label) {

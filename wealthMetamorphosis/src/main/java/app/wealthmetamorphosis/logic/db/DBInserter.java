@@ -17,7 +17,7 @@ public class DBInserter {
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
             preparedStatement.setString(1, newUser.getUserId());
-            preparedStatement.setString(2, newUser.getUserName());
+            preparedStatement.setString(2, newUser.getUsername());
             preparedStatement.setString(3, newUser.getPassword());
             preparedStatement.setDouble(4, newUser.getBalance());
             preparedStatement.execute();

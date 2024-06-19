@@ -57,7 +57,7 @@ public class CreateAccountController {
     @FXML
     void onCreateClicked() {
         List<User> users = dbReader.readFromDB("SELECT * FROM users");
-        if (areTextFieldsNotEmpty() && users.stream().map(User::getUserName).noneMatch(username -> username.equals(usernameTextField.getText())) &&
+        if (areTextFieldsNotEmpty() && users.stream().map(User::getUsername).noneMatch(username -> username.equals(usernameTextField.getText())) &&
                 passwordField.getText().equals(confirmPasswordField.getText())) {
 
             String hashedPassword = DigestUtils.sha256Hex(passwordField.getText());
