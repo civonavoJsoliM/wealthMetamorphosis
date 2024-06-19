@@ -71,7 +71,7 @@
                                     <Font name="Copperplate Light" size="18.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="buySharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToBuy" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
+                              <TextField fx:id="buySharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToBuy" onKeyReleased="#enteredSharesToBuy" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
                                  <font>
                                     <Font name="Copperplate Light" size="15.0" />
                                  </font>
@@ -84,6 +84,26 @@
                               <Insets left="20.0" />
                            </padding>
                         </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label text="Total cost: " textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate Light" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalCostLabel" text="0$" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
                         <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyButtonClicked" prefHeight="45.0" prefWidth="464.0" text="BUY" textFill="WHITE">
                            <font>
                               <Font name="Copperplate Bold" size="25.0" />
@@ -94,7 +114,7 @@
                         <Insets />
                      </VBox.margin>
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets bottom="20.0" top="10.0" />
                      </padding>
                   </VBox>
                   <VBox fx:id="sellVBox" prefHeight="231.0" prefWidth="250.0" spacing="20.0" visible="false">
@@ -137,7 +157,7 @@
                                     <Font name="Copperplate Light" size="18.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="sellSharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToSell" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
+                              <TextField fx:id="sellSharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToSell" onKeyReleased="#enteredSharesToSell" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
                                  <font>
                                     <Font name="Copperplate Light" size="15.0" />
                                  </font>
@@ -145,6 +165,23 @@
                                     <Insets />
                                  </HBox.margin>
                               </TextField>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label text="Total: " textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate Light" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="totalLabel" text="0$" textFill="WHITE">
+                                 <font>
+                                    <Font name="Copperplate" size="18.0" />
+                                 </font>
+                              </Label>
                            </children>
                            <padding>
                               <Insets left="20.0" />

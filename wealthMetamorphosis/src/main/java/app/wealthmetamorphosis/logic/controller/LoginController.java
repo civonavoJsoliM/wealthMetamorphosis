@@ -3,7 +3,6 @@ package app.wealthmetamorphosis.logic.controller;
 import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.Order;
 import app.wealthmetamorphosis.data.User;
-import app.wealthmetamorphosis.data.singleton.DBConnectionSingleton;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.logic.Checker;
 import app.wealthmetamorphosis.logic.db.DBInserter;
@@ -74,7 +73,7 @@ public class LoginController {
                 invalidUsernameLabel.setVisible(false);
                 invalidPasswordLabel.setVisible(false);
 
-                User currentUser = users.stream().filter(user -> user.getUserName().equals(usernameTextField.getText())).findFirst().get();
+                User currentUser = users.stream().filter(user -> user.getUsername().equals(usernameTextField.getText())).findFirst().get();
 
                 List<Order> orders = orderDBReader.readFromDB("SELECT * FROM orders WHERE user_id = '" + currentUser.getUserId() + "' ORDER BY order_timeStamp");
                 currentUser.setOrders(orders);

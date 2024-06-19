@@ -5,7 +5,7 @@ import java.util.List;
 
 public class User {
     private String userId;
-    private String userName;
+    private String username;
     private String password;
     private LocalDateTime registered;
     private double balance;
@@ -14,9 +14,9 @@ public class User {
     public User() {
     }
 
-    public User(String userId, String userName, String password, LocalDateTime registered, double balance) {
+    public User(String userId, String username, String password, LocalDateTime registered, double balance) {
         this.userId = userId;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
         this.registered = registered;
         this.balance = balance;
@@ -34,8 +34,8 @@ public class User {
         this.balance = balance;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {

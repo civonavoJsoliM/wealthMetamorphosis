@@ -15,11 +15,11 @@ public class UserService implements ResultSetToList<User> {
         List<User> users = new ArrayList<>();
         while (resultSet.next()) {
             String userId = resultSet.getString("user_id");
-            String userName = resultSet.getString("user_name");
-            String password = resultSet.getString("user_password");
+            String username = resultSet.getString("username");
+            String password = resultSet.getString("password");
             LocalDateTime registered = resultSet.getTimestamp("registered").toLocalDateTime();
             double balance = resultSet.getDouble("balance");
-            users.add(new User(userId, userName, password, registered, balance));
+            users.add(new User(userId, username, password, registered, balance));
         }
         return users;
     }

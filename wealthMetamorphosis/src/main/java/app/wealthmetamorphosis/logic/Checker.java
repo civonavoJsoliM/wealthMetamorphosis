@@ -6,7 +6,6 @@ import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import javafx.scene.control.TextField;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class Checker {
     public boolean isNumberBiggerThenZero(TextField textField) {
@@ -31,12 +30,12 @@ public class Checker {
 
     public boolean doesUserExistInDB(List<User> users, TextField textField) {
         return users.stream()
-                .anyMatch(user -> user.getUserName().equals(textField.getText()));
+                .anyMatch(user -> user.getUsername().equals(textField.getText()));
     }
 
     public boolean isPasswordValidForUser(List<User> users, TextField usernameTextField, String hashedPassword) {
         return users.stream()
-                .filter(user -> user.getUserName().equals(usernameTextField.getText()))
+                .filter(user -> user.getUsername().equals(usernameTextField.getText()))
                 .anyMatch(user -> user.getPassword().equals(hashedPassword));
     }
 

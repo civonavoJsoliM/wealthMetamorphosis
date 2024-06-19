@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.text.DecimalFormat;
@@ -32,7 +33,8 @@ public class PercentageRefresher implements Runnable {
 
     @Override
     public void run() {
-        List<Double> percentages = new ArrayList<>();
+        List<Double> oldPercentages = new ArrayList<>();
+        List<Double> newPercentages = new ArrayList<>();
         Map<String, Double> map = UserSingleton.getInstance().getOrders().stream()
                 .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
                 .entrySet().stream()
@@ -55,7 +57,7 @@ public class PercentageRefresher implements Runnable {
 
                 double difference = currentStockPrice - avgBuyPrice.getAsDouble();
                 double percentage = 100 / (avgBuyPrice.getAsDouble() / difference);
-                percentages.add(percentage);
+                newPercentages.add(percentage);
 
                 portfolioWorth += currentStockPrice * entry.getValue();
             } catch (IOException | InterruptedException e) {
@@ -63,10 +65,10 @@ public class PercentageRefresher implements Runnable {
             }
         }
         Platform.setImplicitExit(false);
-        setLabelText(portfolioWorth, percentages);
+        setLabelText(portfolioWorth, newPercentages, oldPercentages);
     }
 
-    private void setLabelText(double portfolioWorth, List<Double> percentages) {
+    private void setLabelText(double portfolioWorth, List<Double> newPercentages, List<Double> oldPercentages) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -75,8 +77,19 @@ public class PercentageRefresher implements Runnable {
                     portfolioWorthLabel.setText(Math.round(portfolioWorth) + "$");
                     DecimalFormat decimalFormat = new DecimalFormat("0.00");
                     for (int i = 0; i < profitLossLabels.size(); i++) {
-                        profitLossLabels.get(i).setText(decimalFormat.format(percentages.get(i)) + " %");
+                        profitLossLabels.get(i).setText(decimalFormat.format(newPercentages.get(i)) + " %");
+                        if (!oldPercentages.isEmpty()) {
+                            if (oldPercentages.get(i) > newPercentages.get(i)) {
+                                profitLossLabels.get(i).setStyle("-fx-background-color: red");
+                            } else if (oldPercentages.get(i) < newPercentages.get(i)) {
+                                profitLossLabels.get(i).setStyle("-fx-background-color: green");
+                            } else {
+                                profitLossLabels.get(i).setStyle("-fx-background-color: transparent");
+                            }
+                        }
                     }
+                    newPercentages.clear();
+                    newPercentages.addAll(oldPercentages);
                     myStocksHBox.toFront();
                     System.out.println("Done");
                 });
