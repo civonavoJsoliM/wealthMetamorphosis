@@ -5,6 +5,7 @@ import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.logic.FileReader;
 import app.wealthmetamorphosis.logic.refresher.PercentageRefresher;
 import app.wealthmetamorphosis.logic.service.HttpService;
+import app.wealthmetamorphosis.logic.service.OwnedStockService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -70,9 +71,11 @@ public class ProfileController {
     private HttpService service;
     private List<ScheduledExecutorService> scheduledExecutorServices;
     private List<Label> profitLossLabels;
+    private OwnedStockService ownedStockService;
 
     @FXML
     void initialize() throws IOException {
+        ownedStockService = new OwnedStockService();
         fileReader = new FileReader();
         service = new HttpService(fileReader, counter);
         counter = 0;
@@ -80,9 +83,15 @@ public class ProfileController {
         colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/Colors.txt"));
 
         boolean isUserOwningStocks = UserSingleton.getInstance().getOrders().stream()
-                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
-                .entrySet().stream()
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(order -> {
+                    if (order.getOrderType().equals(OrderType.SELL)) {
+                        return order.getStockShares() * -1;
+                    }
+                    return order.getStockShares();
+                })
+                )).entrySet().stream()
                 .noneMatch(entry -> entry.getValue() > 0);
+
         if (UserSingleton.getInstance().getOrders().isEmpty()) {
             noStocksToDisplayVBox.toFront();
             noOrdersToDisplayVBox.toFront();
@@ -126,7 +135,19 @@ public class ProfileController {
     }
 
     private void fillStocksVBoxWithData() {
-        UserSingleton.getInstance().getOrders().stream()
+
+        /*Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
+                .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(order -> {
+                            if (order.getOrderType().equals(OrderType.SELL)) {
+                                return order.getStockShares() * -1;
+                            }
+                            return order.getStockShares();
+                        })
+                )).entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
+
+        /*UserSingleton.getInstance().getOrders().stream()
                 .filter(order -> order.getOrderType().equals(OrderType.SELL) && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
 
@@ -134,7 +155,9 @@ public class ProfileController {
                 .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
                 .entrySet().stream()
                 .filter(entry -> entry.getValue() > 0)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
+
+        Map<String, Double> portfolio = ownedStockService.getOwnedStocks(UserSingleton.getInstance());
 
         profitLossLabels = new ArrayList<>();
         int i = 0;
@@ -157,8 +180,8 @@ public class ProfileController {
     private HBox gethBox(Label stockLabel, Label sharesLabel, Label profitLossLabel) {
         HBox hBox = new HBox(stockLabel, sharesLabel, profitLossLabel);
         hBox.setAlignment(Pos.TOP_LEFT);
-        HBox.setMargin(stockLabel, new Insets(0, 37.5, 0, 10));
-        HBox.setMargin(sharesLabel, new Insets(0, 30, 0, 0));
+        HBox.setMargin(stockLabel, new Insets(0, 0, 0, 17.5));
+        HBox.setMargin(sharesLabel, new Insets(0, 33, 0, 30));
         return hBox;
     }
 
@@ -185,7 +208,7 @@ public class ProfileController {
     }
 
     private void getPercentageScheduler() {
-        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service, portfolioWorthLabel, myStocksHBox);
+        PercentageRefresher refresher = new PercentageRefresher(profitLossLabels, service, portfolioWorthLabel, myStocksHBox, ownedStockService);
         ScheduledExecutorService percentageScheduler = Executors.newScheduledThreadPool(1);
         percentageScheduler.scheduleAtFixedRate(refresher, 0, 30, TimeUnit.SECONDS);
         scheduledExecutorServices.add(percentageScheduler);
@@ -199,6 +222,11 @@ public class ProfileController {
             Label buyPriceLabel = getBuyPriceLabel(order);
             Label orderTypeLabel = getOrderTypeLabel(order);
             HBox hBox = new HBox(dateLabel, stockLabel, sharesLabel, buyPriceLabel, orderTypeLabel);
+            HBox.setMargin(dateLabel, new Insets(0, 0, 0, 10));
+            HBox.setMargin(stockLabel, new Insets(0, 0, 0, 6));
+            HBox.setMargin(sharesLabel, new Insets(0, 0, 0, 96));
+            HBox.setMargin(buyPriceLabel, new Insets(0, 0, 0, 96));
+            HBox.setMargin(orderTypeLabel, new Insets(0, 0, 0, 86));
             ordersVBox.getChildren().add(hBox);
         }
     }
@@ -207,7 +235,7 @@ public class ProfileController {
         Label dateLabel = new Label();
         dateLabel.setText(order.getOrderTimeStamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss")));
         dateLabel.setId("ordersVBoxLabel");
-        dateLabel.setPadding(new Insets(0, 0, 0, 0));
+        dateLabel.setPrefWidth(170);
         return dateLabel;
     }
 
@@ -215,8 +243,7 @@ public class ProfileController {
         Label stockLabel = new Label();
         stockLabel.setText(order.getStockSymbol());
         stockLabel.setId("ordersVBoxLabel");
-        stockLabel.setPadding(new Insets(0, 0, 0, 45));
-        stockLabel.setPrefWidth(100);
+        stockLabel.setPrefWidth(60);
         return stockLabel;
     }
 
@@ -224,8 +251,7 @@ public class ProfileController {
         Label sharesLabel = new Label();
         sharesLabel.setText(String.valueOf(order.getStockShares()));
         sharesLabel.setId("ordersVBoxLabel");
-        sharesLabel.setPadding(new Insets(0, 0, 0, 80));
-        sharesLabel.setPrefWidth(150);
+        sharesLabel.setPrefWidth(70);
         return sharesLabel;
     }
 
@@ -233,8 +259,7 @@ public class ProfileController {
         Label buyPriceLabel = new Label();
         buyPriceLabel.setText(order.getStockPrice() + "$");
         buyPriceLabel.setId("ordersVBoxLabel");
-        buyPriceLabel.setPadding(new Insets(0, 0, 0, 90));
-        buyPriceLabel.setPrefWidth(200);
+        buyPriceLabel.setPrefWidth(100);
         return buyPriceLabel;
     }
 
@@ -242,24 +267,26 @@ public class ProfileController {
         Label orderTypeLabel = new Label();
         orderTypeLabel.setText(order.getOrderType().name());
         orderTypeLabel.setId("ordersVBoxLabel");
-        orderTypeLabel.setPadding(new Insets(0, 0, 0, 100));
+        orderTypeLabel.setPrefWidth(40);
         return orderTypeLabel;
     }
 
     private void fillPieChartWithData() {
 
         // implement this ->
-        UserSingleton.getInstance().getOrders().stream()
+        /*Map<String, Double> portfolio = UserSingleton.getInstance().getOrders().stream()
                 .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(order -> {
                             if (order.getOrderType().equals(OrderType.SELL)) {
                                 return order.getStockShares() * -1;
                             }
                             return order.getStockShares();
                         })
-                ));
+                )).entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
         // <- implement this
 
-        UserSingleton.getInstance().getOrders().stream()
+       /* UserSingleton.getInstance().getOrders().stream()
                 .filter(order -> order.getOrderType().equals(OrderType.SELL) && order.getStockShares() > 0)
                 .forEach(order -> order.setStockShares(order.getStockShares() * -1));
 
@@ -267,7 +294,9 @@ public class ProfileController {
                 .collect(Collectors.groupingBy(Order::getStockSymbol, Collectors.summingDouble(Order::getStockShares)))
                 .entrySet().stream()
                 .filter(entry -> entry.getValue() > 0)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)); */
+
+        Map<String, Double> portfolio = ownedStockService.getOwnedStocks(UserSingleton.getInstance());
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 

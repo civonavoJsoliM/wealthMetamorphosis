@@ -15,10 +15,10 @@
          <children>
             <Label text="Create Account" textFill="WHITE">
                <font>
-                  <Font name="Copperplate" size="40.0" />
+                  <Font name="Bai Jamjuree Medium" size="40.0" />
                </font>
                <VBox.margin>
-                  <Insets bottom="10.0" />
+                  <Insets bottom="5.0" />
                </VBox.margin>
             </Label>
             <Line endX="450.0" stroke="WHITE" />
@@ -30,7 +30,7 @@
          <children>
             <Label text="Username" textFill="WHITE">
                <font>
-                  <Font name="Copperplate" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="2.0" />
@@ -41,7 +41,7 @@
                   <Insets />
                </VBox.margin>
                <font>
-                  <Font name="Copperplate Light" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
             </TextField>
             <Label fx:id="invalidUsernameLabel" text="Invalid username!" textFill="RED" visible="false">
@@ -49,12 +49,12 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
                <font>
-                  <Font name="Copperplate" size="10.0" />
+                  <Font name="Bai Jamjuree Medium" size="10.0" />
                </font>
             </Label>
             <Label text="Password" textFill="WHITE">
                <font>
-                  <Font name="Copperplate" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="2.0" />
@@ -62,7 +62,7 @@
             </Label>
             <PasswordField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
                <font>
-                  <Font name="Copperplate Light" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
             </PasswordField>
             <Label fx:id="invalidPasswordLabel" text="Invalid password!" textFill="RED" visible="false">
@@ -70,12 +70,12 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
                <font>
-                  <Font name="Copperplate" size="10.0" />
+                  <Font name="Bai Jamjuree Medium" size="10.0" />
                </font>
             </Label>
             <Label text="Confirm password" textFill="WHITE">
                <font>
-                  <Font name="Copperplate" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
                <VBox.margin>
                   <Insets bottom="2.0" />
@@ -83,12 +83,12 @@
             </Label>
             <PasswordField fx:id="confirmPasswordField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
                <font>
-                  <Font name="Copperplate Light" size="16.0" />
+                  <Font name="Bai Jamjuree Medium" size="16.0" />
                </font>
             </PasswordField>
             <Label fx:id="invalidConfirmPasswordField" text="Invalid password!" textFill="RED" visible="false">
                <font>
-                  <Font name="Copperplate" size="10.0" />
+                  <Font name="Bai Jamjuree Medium" size="10.0" />
                </font>
             </Label>
          </children>
@@ -100,7 +100,7 @@
    <bottom>
       <Button fx:id="createButton" mnemonicParsing="false" onMouseClicked="#onCreateClicked" prefHeight="50.0" prefWidth="450.0" text="Create" BorderPane.alignment="CENTER">
          <font>
-            <Font name="Copperplate" size="25.0" />
+            <Font name="Bai Jamjuree Medium" size="25.0" />
          </font>
       </Button>
    </bottom>
