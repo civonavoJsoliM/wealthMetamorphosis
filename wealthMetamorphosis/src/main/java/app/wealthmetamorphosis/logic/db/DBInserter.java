@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class DBInserter {
 
     public void insertIntoUsers(User newUser) {
-        String query = "INSERT INTO users (user_id, user_name, user_password, balance) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO users (user_id, username, password, balance) VALUES (?, ?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(DBConnectionSingleton.getInstance().DBUrl(),
                 DBConnectionSingleton.getInstance().user(), DBConnectionSingleton.getInstance().password());
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {

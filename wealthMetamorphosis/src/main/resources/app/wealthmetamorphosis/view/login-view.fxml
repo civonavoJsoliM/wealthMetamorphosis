@@ -10,7 +10,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="400.0" stylesheets="@../css/login-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.LoginController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="310.0" prefWidth="400.0" stylesheets="@../css/login-scene-layout.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.wealthmetamorphosis.logic.controller.LoginController">
    <children>
       <VBox fx:id="progressVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
          <children>
@@ -29,7 +29,7 @@
                <children>
                   <Label text="Username" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate Light" size="16.0" />
+                        <Font name="Bai Jamjuree Light" size="16.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="2.0" left="75.0" />
@@ -37,7 +37,7 @@
                   </Label>
                   <TextField fx:id="usernameTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
                      <font>
-                        <Font name="Copperplate Light" size="16.0" />
+                        <Font name="Bai Jamjuree Medium" size="16.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="2.0" left="75.0" />
@@ -45,7 +45,7 @@
                   </TextField>
                   <Label fx:id="invalidUsernameLabel" text="Invalid username!" textFill="RED" visible="false">
                      <font>
-                        <Font name="Copperplate Bold" size="10.0" />
+                        <Font name="Bai Jamjuree Light" size="10.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="10.0" left="75.0" />
@@ -53,7 +53,7 @@
                   </Label>
                   <Label text="Passwort" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate Light" size="16.0" />
+                        <Font name="Bai Jamjuree Light" size="16.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="2.0" left="75.0" />
@@ -61,7 +61,7 @@
                   </Label>
                   <PasswordField fx:id="passwordField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="250.0" promptText="Enter">
                      <font>
-                        <Font name="Copperplate Light" size="16.0" />
+                        <Font name="Bai Jamjuree Medium" size="16.0" />
                      </font>
                      <VBox.margin>
                         <Insets bottom="2.0" left="75.0" />
@@ -69,15 +69,15 @@
                   </PasswordField>
                   <Label fx:id="invalidPasswordLabel" text="Invalid password!" textFill="RED" visible="false">
                      <font>
-                        <Font name="Copperplate Bold" size="10.0" />
+                        <Font name="Bai Jamjuree Medium" size="10.0" />
                      </font>
                      <VBox.margin>
-                        <Insets bottom="10.0" left="75.0" />
+                        <Insets bottom="5.0" left="75.0" />
                      </VBox.margin>
                   </Label>
                   <Label fx:id="createAccountLabel" onMouseClicked="#onCreateAccountClicked" text="Create account!" textFill="#89cff0" underline="true">
                      <font>
-                        <Font name="Copperplate Bold" size="13.0" />
+                        <Font name="Bai Jamjuree Light" size="14.0" />
                      </font>
                      <VBox.margin>
                         <Insets left="75.0" />
@@ -91,21 +91,21 @@
                <children>
                   <Button fx:id="signInButton" mnemonicParsing="false" onMouseClicked="#onSignInButtonClicked" prefHeight="50.0" prefWidth="400.0" text="Sign in" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="25.0" />
+                        <Font name="Bai Jamjuree Medium" size="25.0" />
                      </font>
                   </Button>
                </children>
             </HBox>
          </bottom>
          <top>
-            <VBox alignment="BOTTOM_CENTER" prefHeight="65.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="65.0" prefWidth="400.0" BorderPane.alignment="CENTER">
                <children>
                   <Label text="Login" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="40.0" />
+                        <Font name="Bai Jamjuree Medium" size="40.0" />
                      </font>
                      <VBox.margin>
-                        <Insets bottom="10.0" />
+                        <Insets bottom="5.0" />
                      </VBox.margin>
                   </Label>
                   <Line endX="400.0" stroke="WHITE" />

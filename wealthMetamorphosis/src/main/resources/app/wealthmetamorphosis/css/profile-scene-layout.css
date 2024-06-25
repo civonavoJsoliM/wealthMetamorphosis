@@ -14,16 +14,16 @@
 }
 #stocksVBoxLabel {
         -fx-text-fill: white;
-        -fx-font-family: Copperplate;
-        -fx-font-weight: lighter;
-        -fx-font-size: 17px;
+        -fx-font-family: Bai Jamjuree Medium;
+        /*-fx-font-weight: lighter;*/
+        -fx-font-size: 15px;
         -fx-pref-width: 73;
 }
 #ordersVBoxLabel {
         -fx-text-fill: white;
-        -fx-font-family: Copperplate;
-        -fx-font-size: 17px;
-        -fx-font-weight: lighter;
+        -fx-font-family: Bai Jamjuree Medium;
+        -fx-font-size: 15px;
+        /*-fx-font-weight: lighter;*/
 }
 #pieChart {
         -fx-border-color: transparent;

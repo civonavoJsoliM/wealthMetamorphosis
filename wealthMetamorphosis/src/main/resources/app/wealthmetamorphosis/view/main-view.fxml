@@ -21,7 +21,7 @@
                <children>
                   <Button fx:id="profileButton" mnemonicParsing="false" onMouseClicked="#onProfileClicked" prefWidth="250.0" text="Profile" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate Bold" size="18.0" />
+                        <Font name="Bai Jamjuree Medium" size="19.0" />
                      </font>
                   </Button>
                </children>
@@ -30,7 +30,7 @@
                <children>
                   <Label fx:id="stockLabel" text="Stock" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="51.0" />
+                        <Font name="Bai Jamjuree Medium" size="51.0" />
                      </font>
                      <padding>
                         <Insets left="20.0" />
@@ -39,9 +39,9 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="priceLabel" text="Price" textFill="WHITE">
+                  <Label fx:id="priceLabel" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="25.0" />
+                        <Font name="Bai Jamjuree Medium" size="25.0" />
                      </font>
                      <padding>
                         <Insets left="20.0" />
@@ -58,22 +58,22 @@
                      <children>
                         <Label fx:id="invalidInputBuyLabel" text="Please enter valid input!" textFill="RED" visible="false">
                            <font>
-                              <Font name="Copperplate" size="12.0" />
+                              <Font name="Bai Jamjuree Light" size="10.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="-15.0" left="82.0" />
+                              <Insets bottom="-15.0" left="88.0" />
                            </VBox.margin>
                         </Label>
                         <HBox prefHeight="13.0" prefWidth="214.0">
                            <children>
                               <Label text="Shares: " textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate Light" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                               <TextField fx:id="buySharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToBuy" onKeyReleased="#enteredSharesToBuy" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
                                  <font>
-                                    <Font name="Copperplate Light" size="15.0" />
+                                    <Font name="Bai Jamjuree Medium" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets />
@@ -88,12 +88,12 @@
                            <children>
                               <Label text="Total cost: " textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate Light" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                               <Label fx:id="totalCostLabel" text="0$" textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                            </children>
@@ -106,7 +106,7 @@
                         </HBox>
                         <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyButtonClicked" prefHeight="45.0" prefWidth="464.0" text="BUY" textFill="WHITE">
                            <font>
-                              <Font name="Copperplate Bold" size="25.0" />
+                              <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
                         </Button>
                      </children>
@@ -123,7 +123,7 @@
                            <children>
                               <Label text="Owned shares: " textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate Light" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                                  <padding>
                                     <Insets left="20.0" />
@@ -134,7 +134,7 @@
                               </Label>
                               <Label fx:id="ownedSharesLabel" text="Label" textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                            </children>
@@ -144,22 +144,22 @@
                         </HBox>
                         <Label fx:id="invalidInputSellLabel" text="Please enter valid input!" textFill="RED" visible="false">
                            <font>
-                              <Font name="Copperplate" size="12.0" />
+                              <Font name="Bai Jamjuree Light" size="10.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="-15.0" left="82.0" />
+                              <Insets bottom="-15.0" left="88.0" />
                            </VBox.margin>
                         </Label>
                         <HBox prefHeight="14.0" prefWidth="217.0">
                            <children>
                               <Label text="Shares: " textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate Light" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                               <TextField fx:id="sellSharesTextField" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#enteringSharesToSell" onKeyReleased="#enteredSharesToSell" prefHeight="20.0" prefWidth="140.0" promptText="Enter">
                                  <font>
-                                    <Font name="Copperplate Light" size="15.0" />
+                                    <Font name="Bai Jamjuree Medium" size="14.0" />
                                  </font>
                                  <HBox.margin>
                                     <Insets />
@@ -174,12 +174,29 @@
                            <children>
                               <Label text="Total: " textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate Light" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                               <Label fx:id="totalLabel" text="0$" textFill="WHITE">
                                  <font>
-                                    <Font name="Copperplate" size="18.0" />
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Label fx:id="profitLossLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="profitLossValueLabel" text="Label" textFill="WHITE">
+                                 <font>
+                                    <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
                            </children>
@@ -189,17 +206,17 @@
                         </HBox>
                         <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#onSellButtonClicked" prefHeight="27.0" prefWidth="433.0" text="SELL">
                            <font>
-                              <Font name="Copperplate Bold" size="25.0" />
+                              <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
                         </Button>
-                        <Button fx:id="sellAllButton" mnemonicParsing="false" onMouseClicked="#onSellAllButtonClicked" prefHeight="45.0" prefWidth="253.0" text="Sell All">
+                        <Button fx:id="sellAllButton" mnemonicParsing="false" onMouseClicked="#onSellAllButtonClicked" prefHeight="45.0" prefWidth="253.0" text="SELL ALL">
                            <font>
-                              <Font name="Copperplate Bold" size="25.0" />
+                              <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
                         </Button>
                      </children>
                      <padding>
-                        <Insets top="10.0" />
+                        <Insets bottom="20.0" top="10.0" />
                      </padding>
                   </VBox>
                </children>
@@ -211,12 +228,12 @@
                <children>
                   <Label text="Balance: " textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="20.0" />
+                        <Font name="Bai Jamjuree Medium" size="20.0" />
                      </font>
                   </Label>
                   <Label fx:id="balanceLabel" text="Label" textFill="WHITE">
                      <font>
-                        <Font name="Copperplate" size="20.0" />
+                        <Font name="Bai Jamjuree Medium" size="20.0" />
                      </font>
                   </Label>
                </children>
@@ -232,7 +249,7 @@
          <children>
             <Label fx:id="placeholderLabel" text="Choose stock to display chart!" textFill="WHITE">
                <font>
-                  <Font name="Copperplate Light" size="15.0" />
+                  <Font name="Bai Jamjuree Medium" size="14.0" />
                </font></Label>
          </children>
          <BorderPane.margin>
@@ -248,7 +265,7 @@
          <children>
             <TextField fx:id="searchTextField" minHeight="-Infinity" onKeyTyped="#typingIntoSearchTextField" prefHeight="35.0" promptText="Search" styleClass="textField">
                <font>
-                  <Font name="Copperplate Light" size="20.0" />
+                  <Font name="Bai Jamjuree Medium" size="20.0" />
                </font></TextField>
             <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" onMouseEntered="#onMouseEnteredStocksScrollPane" onMouseExited="#onMouseExitedStocksScrollPane" prefHeight="870.0" prefWidth="200.0" style="-fx-background-color: transparent;" vbarPolicy="NEVER">
                <content>

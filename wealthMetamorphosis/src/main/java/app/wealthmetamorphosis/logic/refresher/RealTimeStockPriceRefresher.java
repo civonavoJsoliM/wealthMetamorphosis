@@ -1,12 +1,14 @@
 package app.wealthmetamorphosis.logic.refresher;
 
 import app.wealthmetamorphosis.logic.service.HttpService;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
 
+import javafx.util.Duration;
 import org.json.JSONObject;
 
 public class RealTimeStockPriceRefresher implements Runnable {
@@ -15,7 +17,6 @@ public class RealTimeStockPriceRefresher implements Runnable {
     private Label label;
     private JSONObject jsonObject;
     private int i = 0;
-    private double oldCurrentPrice;
 
     public RealTimeStockPriceRefresher(HttpService httpService, JSONObject jsonObject) {
         this.httpService = httpService;
@@ -31,7 +32,7 @@ public class RealTimeStockPriceRefresher implements Runnable {
             double newCurrentPrice = getPriceFromJSONObject(response);
             System.out.println(newCurrentPrice);
             if (label != null) {
-                setNewPrice(newCurrentPrice, oldCurrentPrice);
+                setNewPrice(newCurrentPrice);
                 System.out.println("Refresh price of: " + stockSymbol + ": " + ++i);
             }
         } catch (IOException | InterruptedException e) {
@@ -44,27 +45,25 @@ public class RealTimeStockPriceRefresher implements Runnable {
         return Double.parseDouble(jsonObject.getString("price"));
     }
 
-    private void setNewPrice(double newCurrentPrice, double oldCurrentPrice) {
+    private void setNewPrice(double newCurrentPrice) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                label.setText((newCurrentPrice) + "$");
-                if (oldCurrentPrice != 0) {
-                    if (oldCurrentPrice > newCurrentPrice) {
-                        label.setStyle("-fx-background-color: red");
-                    } else if (oldCurrentPrice < newCurrentPrice) {
-                        label.setStyle("-fx-background-color: green");
-                    } else {
-                        label.setStyle("-fx-background-color: transparent");
+                label.setStyle("-fx-text-fill: white");
+                if (!label.getText().isBlank()) {
+                    if (Double.parseDouble(label.getText().substring(0, label.getText().length() - 1)) < newCurrentPrice) {
+                        label.setStyle("-fx-text-fill: #AAFF00");
+                    }
+                    if (Double.parseDouble(label.getText().substring(0, label.getText().length() - 1)) > newCurrentPrice) {
+                        label.setStyle("-fx-text-fill: #FF4D4D");
                     }
                 }
-                setOldPrice(oldCurrentPrice, newCurrentPrice);
+                label.setText((newCurrentPrice) + "$");
+                PauseTransition transition = new PauseTransition(Duration.seconds(3));
+                transition.setOnFinished(event -> label.setStyle("-fx-text-fill: white"));
+                transition.playFromStart();
             }
         });
-    }
-
-    private void setOldPrice(double oldCurrentPrice, double newCurrentPrice) {
-        oldCurrentPrice = newCurrentPrice;
     }
 
     public void setLabel(Label label) {

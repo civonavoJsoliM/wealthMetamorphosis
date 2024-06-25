@@ -23,7 +23,7 @@
         -fx-background-color: transparent;
         -fx-text-fill: white;
         -fx-font-size: 20px;
-        -fx-font-family: Copperplate;
+        -fx-font-family: Bai Jamjuree Medium;
 }
 #stockButton:hover {
         -fx-text-fill: #212324;
@@ -39,7 +39,7 @@
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-size: 20px;
-    -fx-font-family: Copperplate;
+    -fx-font-family: Bai Jamjuree Medium;
     -fx-border-width: 0 0 3px 0;
     -fx-border-color: white;
     -fx-border-style: solid;
@@ -73,7 +73,7 @@
 #timeIntervalButton {
         -fx-background-color: transparent;
         -fx-font-size: 15px;
-        -fx-font-family: Copperplate;
+        -fx-font-family: Bai Jamjuree Medium;
         -fx-text-fill: white;
         -fx-pref-width: 131px;
         -fx-border-color: white;
@@ -105,7 +105,7 @@
 }
 #yAxis {
         -fx-tick-label-fill: white;
-        -fx-tick-label-font-family: Copperplate;
+        -fx-tick-label-font-family: Bai Jamjuree Medium;
         -fx-tick-label-gap: 0px;
         -fx-pref-width: 30px;
 }
@@ -133,7 +133,7 @@
 }
 #chartDataLabel {
         -fx-text-fill: white;
-        -fx-font-family: Copperplate;
+        -fx-font-family: Bai Jamjuree Medium;
         -fx-font-size: 18px;
         -fx-padding: 5 0 5 0;
 }
