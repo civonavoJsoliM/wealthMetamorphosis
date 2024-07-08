@@ -106,7 +106,7 @@ public class MainController {
 
         stocksHBoxes = new ArrayList<>();
 
-        List<String> stockSymbols = fileReader.readFromFile("/Users/USER/Desktop/wealthMetamorphosis/StockSymbols.txt");
+        List<String> stockSymbols = fileReader.readFromFile("/Users/USER/Desktop/wealthMetamorphosis/TextFiles/StockSymbols.txt");
         stockSymbols.forEach(stockSymbol -> {
             Button stockButton = getStockButton(stockSymbol);
 
