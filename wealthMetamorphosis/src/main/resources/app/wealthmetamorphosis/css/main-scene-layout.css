@@ -55,11 +55,6 @@
         -fx-border-color: white;
         -fx-border-style: solid;
 }
-/*#tradingVBox {
-        -fx-border-width: 0 0 3px 3px;
-        -fx-border-color: white;
-        -fx-border-style: solid;
-} */
 #buyVBox {
         -fx-border-width: 0 0 3px 3px;
         -fx-border-color: white;
@@ -151,7 +146,7 @@
 #buyButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
-        -fx-border-width: 1px 0 1px 0;
+        -fx-border-width: 1px 1px 1px 1px;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
@@ -162,7 +157,7 @@
 #sellButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
-        -fx-border-width: 1px 0 1px 0;
+        -fx-border-width: 1px 1px 1px 1px;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
@@ -173,7 +168,7 @@
 #sellAllButton {
         -fx-background-color: transparent;
         -fx-text-fill: white;
-        -fx-border-width: 1px 0 1px 0;
+        -fx-border-width: 1px 1px 1px 1px;
         -fx-border-color: white;
         -fx-border-style: solid;
 }
@@ -185,4 +180,40 @@
         -fx-border-width: 3px 0 0 3px;
         -fx-border-color: white;
         -fx-border-style: solid;
+}
+.dialog-pane {
+        -fx-background-color: #212324;
+}
+.dialog-pane .button {
+        -fx-border-width: .5px .5px .5px .5px;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+        -fx-background-color: #212324;
+        -fx-text-fill: white;
+}
+.dialog-pane .button:hover {
+        -fx-border-width: .5px .5px .5px .5px;
+        -fx-border-color: white;
+        -fx-border-style: solid;
+        -fx-background-color: white;
+        -fx-text-fill: #212324;
+}
+.dialog-pane > .button-bar > .container {
+        -fx-background-color: #212324;
+        -fx-padding: 1em 1em 1em 1em;
+}
+.dialog-pane:header .header-panel {
+        -fx-background-color: #212324;
+}
+.dialog-pane:header .header-panel .label {
+        -fx-text-fill: white;
+        -fx-font-size: 20px;
+        -fx-font-weight: bold;
+        -fx-alignment: center;
+}
+.dialog-pane:header .header-panel {
+        -fx-alignment: center;
+}
+.alert.confirmation.dialog-pane {
+        -fx-graphic: url("warning-picture.png");
 }

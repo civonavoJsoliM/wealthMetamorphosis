@@ -2,5 +2,6 @@ package app.wealthmetamorphosis.data;
 
 public enum OrderType {
     BUY,
-    SELL;
+    SELL,
+    SELL_ALL;
 }

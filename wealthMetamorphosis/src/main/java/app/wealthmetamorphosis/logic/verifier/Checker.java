@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.verifier;
 
 import app.wealthmetamorphosis.data.User;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
@@ -41,6 +41,7 @@ public class Checker {
                 .filter(user -> user.getUsername().equals(username))
                 .anyMatch(user -> user.getPassword().equals(hashedPassword));
     }
+
     public boolean doPasswordsMatch(String password, String confirmPassword) {
         return password.equals(confirmPassword);
     }

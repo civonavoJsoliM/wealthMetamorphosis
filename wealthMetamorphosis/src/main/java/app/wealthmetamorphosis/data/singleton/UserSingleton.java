@@ -5,7 +5,7 @@ import app.wealthmetamorphosis.data.User;
 public class UserSingleton {
     private static User user;
 
-    public UserSingleton() {
+    private UserSingleton() {
     }
 
     public static synchronized User getInstance() {

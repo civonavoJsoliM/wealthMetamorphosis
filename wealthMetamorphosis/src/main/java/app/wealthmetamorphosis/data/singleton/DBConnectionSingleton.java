@@ -5,7 +5,7 @@ import app.wealthmetamorphosis.data.DBConnection;
 public class DBConnectionSingleton {
     private static DBConnection dbConnection;
 
-    public DBConnectionSingleton() {
+    private DBConnectionSingleton() {
     }
     public static synchronized DBConnection getInstance() {
         return dbConnection;

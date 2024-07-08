@@ -1,18 +1,11 @@
 package app.wealthmetamorphosis.logic.db;
 
-import app.wealthmetamorphosis.data.DBConnection;
 import app.wealthmetamorphosis.data.singleton.DBConnectionSingleton;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
 
 import java.sql.*;
 
 public class DBUpdater {
-
-    private final DBConnection dbConnection;
-
-    public DBUpdater(DBConnection dbConnection) {
-        this.dbConnection = dbConnection;
-    }
 
     public void updateBalance() {
         String query = "UPDATE users SET balance = ? WHERE user_id = ?";

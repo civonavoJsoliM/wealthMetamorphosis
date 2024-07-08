@@ -1,9 +1,10 @@
 package app.wealthmetamorphosis.logic.refresher;
 
+import app.wealthmetamorphosis.data.parameters.StockPriceRefresherParameters;
+import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.logic.colorChanger.ColorChanger;
 import app.wealthmetamorphosis.logic.colorChanger.GreenColorChanger;
 import app.wealthmetamorphosis.logic.colorChanger.RedColorChanger;
-import app.wealthmetamorphosis.logic.service.HttpService;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
@@ -16,23 +17,21 @@ import java.util.List;
 import javafx.util.Duration;
 import org.json.JSONObject;
 
-public class RealTimeStockPriceRefresher implements Runnable {
-    private final HttpService httpService;
+public class StockPriceRefresher implements Runnable {
+    private final StockPriceRefresherParameters sprp;
+    private Label priceLabel;
     private String stockSymbol;
-    private Label label;
 
-    public RealTimeStockPriceRefresher(HttpService httpService) {
-        this.httpService = httpService;
+    public StockPriceRefresher(StockPriceRefresherParameters sprp) {
+        this.sprp = sprp;
     }
 
     @Override
     public void run() {
         try {
-            HttpResponse<String> response = httpService.getRealTimeStockPrice(stockSymbol);
+            HttpResponse<String> response = sprp.httpService().getRealTimeStockPrice(stockSymbol);
             double newCurrentPrice = getPriceFromJSONObject(response);
-            //if (label != null) {
-                setNewPrice(newCurrentPrice);
-            //}
+            setNewPrice(newCurrentPrice);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -47,18 +46,63 @@ public class RealTimeStockPriceRefresher implements Runnable {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (!label.getText().isBlank()) {
-                    changeCurrentPriceColor(newCurrentPrice, label);
+                if (!priceLabel.getText().matches("\\s")) {
+                    changeCurrentPriceColor(newCurrentPrice, priceLabel);
+
                 }
-                label.setText((newCurrentPrice) + "$");
+                priceLabel.setText(newCurrentPrice + "$");
                 changeTextFillBack();
+
+                if (!sprp.sellSharesTextField().getText().isBlank()) {
+                    setTotalLabelText(newCurrentPrice);
+
+                    setProfitLossValue(newCurrentPrice);
+                }
+                if (!sprp.buySharesTextField().getText().isBlank()) {
+                    setTotalCostLabelText(newCurrentPrice);
+                }
             }
         });
     }
 
+    private void setTotalLabelText(double newCurrentPrice) {
+        double total = Math.round(newCurrentPrice * Double.parseDouble(sprp.sellSharesTextField().getText()) * 100.0) / 100.0;
+        sprp.totalLabel().setText(total + "$");
+    }
+
+    private void setTotalCostLabelText(double newCurrentPrice) {
+        double totalCost = Math.round(newCurrentPrice * Double.parseDouble(sprp.buySharesTextField().getText()) * 100.0) / 100.0;
+        sprp.totalCostLabel().setText(totalCost + "$");
+    }
+
+    private void setProfitLossValue(double newPrice) {
+        double ownedShares = sprp.ownedStockService().getSharesFromCertainStock(UserSingleton.getInstance(), stockSymbol);
+        double totalInvestedInStock = sprp.ownedStockService().getInvestedInStock(UserSingleton.getInstance(), stockSymbol);
+        double percentage = sprp.ownedStockService().getPercentage(totalInvestedInStock, newPrice, ownedShares);
+        double sharesToSell = Double.parseDouble(sprp.sellSharesTextField().getText());
+        double amountToSell = newPrice * sharesToSell;
+        double profitLoss = Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0;
+
+        setProfitLossLabel(profitLoss);
+    }
+
+
+    private void setProfitLossLabel(double value) {
+        ColorChanger redColorChanger = new RedColorChanger(0, value, sprp.profitLossLabel());
+        ColorChanger greenColorChanger = new GreenColorChanger(0, value, sprp.profitLossLabel());
+        List<ColorChanger> colorChangers = new ArrayList<>(List.of(redColorChanger, greenColorChanger));
+
+        if (value != 0) {
+            for (ColorChanger colorChanger : colorChangers) {
+                colorChanger.change();
+                sprp.profitLossLabel().setText(value + "$");
+            }
+        }
+    }
+
     private void changeTextFillBack() {
         PauseTransition transition = new PauseTransition(Duration.seconds(3));
-        transition.setOnFinished(event -> label.setStyle("-fx-text-fill: white"));
+        transition.setOnFinished(event -> priceLabel.setStyle("-fx-text-fill: white"));
         transition.playFromStart();
     }
 
@@ -74,8 +118,8 @@ public class RealTimeStockPriceRefresher implements Runnable {
         }
     }
 
-    public void setLabel(Label label) {
-        this.label = label;
+    public void setPriceLabel(Label priceLabel) {
+        this.priceLabel = priceLabel;
     }
 
     public void setStockSymbol(String stockSymbol) {

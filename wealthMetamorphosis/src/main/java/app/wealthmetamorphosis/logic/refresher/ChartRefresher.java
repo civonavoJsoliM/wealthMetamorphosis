@@ -7,11 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.XYChart;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
 
-public class RealTimeChartRefresher implements Runnable {
+public class ChartRefresher implements Runnable {
     private ObjectMapper objectMapper;
     private final HttpService httpService;
     private String stockSymbol;
@@ -19,7 +20,7 @@ public class RealTimeChartRefresher implements Runnable {
     private String outputSize;
     private final AreaChart<String, Number> chart;
 
-    public RealTimeChartRefresher(HttpService httpService, AreaChart<String, Number> chart, ObjectMapper objectMapper) {
+    public ChartRefresher(HttpService httpService, AreaChart<String, Number> chart, ObjectMapper objectMapper) {
         this.httpService = httpService;
         this.chart = chart;
         this.objectMapper = objectMapper;
@@ -41,7 +42,7 @@ public class RealTimeChartRefresher implements Runnable {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         for (int i = stock.getValues().size() - 1; i >= 0; i--) {
             Number closingPrice = BigDecimal.valueOf(Double.parseDouble(stock.getValues().get(i).getClose()));
-            String date =  stock.getValues().get(i).getDatetime();
+            String date = stock.getValues().get(i).getDatetime();
             XYChart.Data<String, Number> data = new XYChart.Data<>(date, closingPrice);
             series.getData().add(data);
         }
@@ -63,9 +64,15 @@ public class RealTimeChartRefresher implements Runnable {
         });
     }
 
-    public void setParameters(String stockSymbol, String interval, String outputSize) {
+    public void setStockSymbol(String stockSymbol) {
         this.stockSymbol = stockSymbol;
+    }
+
+    public void setInterval(String interval) {
         this.interval = interval;
+    }
+
+    public void setOutputSize(String outputSize) {
         this.outputSize = outputSize;
     }
 }

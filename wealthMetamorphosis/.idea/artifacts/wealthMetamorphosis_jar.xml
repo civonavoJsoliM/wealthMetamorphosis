@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="wealthMetamorphosis:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/wealthMetamorphosis_jar</output-path>
+    <root id="archive" name="wealthMetamorphosis.jar">
+      <element id="module-output" name="wealthMetamorphosis" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.16.1/jackson-core-2.16.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/21-ea+24/javafx-controls-21-ea+24-mac-aarch64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.16.1/jackson-annotations-2.16.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/21-ea+24/javafx-controls-21-ea+24.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/21-ea+24/javafx-graphics-21-ea+24-mac-aarch64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.16.0/commons-codec-1.16.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/21-ea+24/javafx-fxml-21-ea+24-mac-aarch64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/21-ea+24/javafx-graphics-21-ea+24.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.16.1/jackson-databind-2.16.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/21-ea+24/javafx-base-21-ea+24-mac-aarch64.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20240303/json-20240303.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/21-ea+24/javafx-base-21-ea+24.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/21-ea+24/javafx-fxml-21-ea+24.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

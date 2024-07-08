@@ -3,6 +3,7 @@ package app.wealthmetamorphosis.logic.db;
 import app.wealthmetamorphosis.data.Order;
 import app.wealthmetamorphosis.data.User;
 import app.wealthmetamorphosis.data.singleton.DBConnectionSingleton;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,7 +22,6 @@ public class DBInserter {
             preparedStatement.setString(3, newUser.getPassword());
             preparedStatement.setDouble(4, newUser.getBalance());
             preparedStatement.execute();
-            System.out.println("Done");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -42,7 +42,6 @@ public class DBInserter {
             preparedStatement.setString(5, newOrder.getOrderType().name());
             preparedStatement.setString(6, newOrder.getUserId());
             preparedStatement.execute();
-            System.out.println("Done");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

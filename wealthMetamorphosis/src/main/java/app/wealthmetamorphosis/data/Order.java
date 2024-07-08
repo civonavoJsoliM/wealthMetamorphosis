@@ -29,7 +29,6 @@ public class Order {
         return orderType;
     }
 
-
     public LocalDateTime getOrderTimeStamp() {
         return orderTimeStamp;
     }
@@ -48,8 +47,5 @@ public class Order {
 
     public double getStockShares() {
         return stockShares;
-    }
-    public void setStockShares(double stockShares) {
-        this.stockShares = stockShares;
     }
 }

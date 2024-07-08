@@ -1,4 +1,4 @@
-package app.wealthmetamorphosis.logic.service;
+package app.wealthmetamorphosis.logic.verifier;
 
 import javafx.scene.control.TextFormatter;
 
@@ -7,7 +7,7 @@ import java.util.function.UnaryOperator;
 public class Validator {
     public UnaryOperator<TextFormatter.Change> validateIfInputNumber() {
         return input -> {
-            if (!input.getText().matches("\\d") || doesNumberStartWithZero(input)) {
+            if (!input.getText().matches("\\d") || input.getRangeEnd() > 4 || doesNumberStartWithZero(input)) {
                 input.setText("");
             }
             return input;
@@ -16,5 +16,14 @@ public class Validator {
 
     private boolean doesNumberStartWithZero(TextFormatter.Change input) {
         return !input.getText().isEmpty() && input.getControlNewText().startsWith("0");
+    }
+
+    public UnaryOperator<TextFormatter.Change> validateInput() {
+        return input -> {
+            if (input.getText().matches("\\s")) {
+                input.setText("");
+            }
+            return input;
+        };
     }
 }

@@ -1,4 +1,6 @@
-package app.wealthmetamorphosis.logic;
+package app.wealthmetamorphosis.logic.calculator;
+
+import app.wealthmetamorphosis.logic.file.FileReader;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

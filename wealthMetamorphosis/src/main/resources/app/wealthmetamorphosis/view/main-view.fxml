@@ -39,7 +39,7 @@
                         <Insets top="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="priceLabel" textFill="WHITE">
+                  <Label fx:id="priceLabel" text="Price" textFill="WHITE">
                      <font>
                         <Font name="Bai Jamjuree Medium" size="25.0" />
                      </font>
@@ -54,14 +54,14 @@
             </VBox>
             <VBox fx:id="tradingVBox" prefHeight="865.0" prefWidth="220.0">
                <children>
-                  <VBox fx:id="buyVBox" prefHeight="135.0" prefWidth="253.0" spacing="20.0" visible="false">
+                  <VBox fx:id="buyVBox" alignment="CENTER" prefHeight="135.0" prefWidth="253.0" spacing="20.0" visible="false">
                      <children>
                         <Label fx:id="invalidInputBuyLabel" text="Please enter valid input!" textFill="RED" visible="false">
                            <font>
-                              <Font name="Bai Jamjuree Light" size="10.0" />
+                              <Font name="Bai Jamjuree Medium" size="12.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="-15.0" left="88.0" />
+                              <Insets bottom="-15.0" left="67.0" />
                            </VBox.margin>
                         </Label>
                         <HBox prefHeight="13.0" prefWidth="214.0">
@@ -104,7 +104,7 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
-                        <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyButtonClicked" prefHeight="45.0" prefWidth="464.0" text="BUY" textFill="WHITE">
+                        <Button fx:id="buyButton" mnemonicParsing="false" onMouseClicked="#onBuyButtonClicked" prefHeight="45.0" prefWidth="230.0" text="BUY" textFill="WHITE">
                            <font>
                               <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
@@ -117,7 +117,7 @@
                         <Insets bottom="20.0" top="10.0" />
                      </padding>
                   </VBox>
-                  <VBox fx:id="sellVBox" prefHeight="231.0" prefWidth="250.0" spacing="20.0" visible="false">
+                  <VBox fx:id="sellVBox" alignment="CENTER" prefHeight="231.0" prefWidth="250.0" spacing="20.0" visible="false">
                      <children>
                         <HBox prefHeight="12.0" prefWidth="217.0">
                            <children>
@@ -144,10 +144,10 @@
                         </HBox>
                         <Label fx:id="invalidInputSellLabel" text="Please enter valid input!" textFill="RED" visible="false">
                            <font>
-                              <Font name="Bai Jamjuree Light" size="10.0" />
+                              <Font name="Bai Jamjuree Medium" size="12.0" />
                            </font>
                            <VBox.margin>
-                              <Insets bottom="-15.0" left="88.0" />
+                              <Insets bottom="-15.0" left="67.0" />
                            </VBox.margin>
                         </Label>
                         <HBox prefHeight="14.0" prefWidth="217.0">
@@ -189,12 +189,12 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
-                              <Label fx:id="profitLossLabel" text="Label" textFill="WHITE">
+                              <Label text="P / L : " textFill="WHITE">
                                  <font>
                                     <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="profitLossValueLabel" text="Label" textFill="WHITE">
+                              <Label fx:id="profitLossLabel" text="Label" textFill="WHITE">
                                  <font>
                                     <Font name="Bai Jamjuree Medium" size="18.0" />
                                  </font>
@@ -204,12 +204,12 @@
                               <Insets left="20.0" />
                            </padding>
                         </HBox>
-                        <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#onSellButtonClicked" prefHeight="27.0" prefWidth="433.0" text="SELL">
+                        <Button fx:id="sellButton" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#onSellButtonClicked" prefHeight="27.0" prefWidth="230.0" text="SELL">
                            <font>
                               <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
                         </Button>
-                        <Button fx:id="sellAllButton" mnemonicParsing="false" onMouseClicked="#onSellAllButtonClicked" prefHeight="45.0" prefWidth="253.0" text="SELL ALL">
+                        <Button fx:id="sellAllButton" mnemonicParsing="false" onMouseClicked="#onSellAllButtonClicked" prefHeight="45.0" prefWidth="230.0" text="SELL ALL">
                            <font>
                               <Font name="Bai Jamjuree Medium" size="25.0" />
                            </font>
@@ -244,22 +244,6 @@
          </children>
       </VBox>
    </right>
-   <center>
-      <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="placeholderLabel" text="Choose stock to display chart!" textFill="WHITE">
-               <font>
-                  <Font name="Bai Jamjuree Medium" size="14.0" />
-               </font></Label>
-         </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets left="10.0" right="10.0" top="1.0" />
-         </padding>
-      </VBox>
-   </center>
    <left>
       <VBox fx:id="stocksAndTextFieldVBox" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
@@ -275,4 +259,24 @@
          </children>
       </VBox>
    </left>
+   <center>
+      <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="chartsVBox" alignment="CENTER" prefHeight="900.0" prefWidth="942.0" style="-fx-background-color: #212324;">
+               <padding>
+                  <Insets left="10.0" right="10.0" top="1.0" />
+               </padding>
+            </VBox>
+            <VBox fx:id="placeholderVBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #212324;">
+               <children>
+                  <Label text="Choose stock to display chart!" textFill="WHITE">
+                     <font>
+                        <Font name="Bai Jamjuree Medium" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </center>
 </BorderPane>
