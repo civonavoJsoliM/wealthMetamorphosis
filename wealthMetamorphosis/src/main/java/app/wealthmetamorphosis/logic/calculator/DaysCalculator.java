@@ -20,7 +20,7 @@ public class DaysCalculator {
     }
 
     private boolean isDayHoliday(LocalDate date) {
-        List<String> stockMarketHolidays = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/StockMarketHolidays.txt");
+        List<String> stockMarketHolidays = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/StockMarketHolidays.txt");
         List<LocalDate> holidays = new ArrayList<>();
         for (String stockMarketHoliday : stockMarketHolidays) {
             LocalDate holiday = LocalDate.parse(stockMarketHoliday);

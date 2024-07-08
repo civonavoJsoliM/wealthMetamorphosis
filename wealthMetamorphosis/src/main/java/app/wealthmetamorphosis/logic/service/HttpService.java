@@ -43,6 +43,6 @@ public class HttpService {
     }
 
     private List<String> getApiKeys() {
-        return fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/ApiKeys.txt");
+        return fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/ApiKeys.txt");
     }
 }

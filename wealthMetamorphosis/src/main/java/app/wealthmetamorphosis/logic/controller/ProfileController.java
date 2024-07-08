@@ -73,7 +73,7 @@ public class ProfileController {
         int counter = 0;
         HttpService service = new HttpService(fileReader, counter);
         scheduledExecutorServices = new ArrayList<>();
-        colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/Colors.txt"));
+        colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/Colors.txt"));
         profileControllerService = new ProfileControllerService(ownedStockService, service, portfolioWorthLabel,
                 myStocksHBox, scheduledExecutorServices);
 

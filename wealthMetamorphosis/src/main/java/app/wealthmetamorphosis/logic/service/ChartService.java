@@ -162,7 +162,7 @@ public class ChartService {
         timeIntervalsHBox = new HBox();
         timeIntervalsHBox.setId("timeIntervalsHBox");
         List<Button> timeIntervalButtons = new ArrayList<>();
-        List<String> timeIntervalsData = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TimeIntervals.txt");
+        List<String> timeIntervalsData = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/TimeIntervals.txt");
         for (String timeInterval : timeIntervalsData) {
             Button timeIntervalButton = getTimeIntervalButton(timeInterval, timeIntervalButtons);
             timeIntervalsHBox.getChildren().add(timeIntervalButton);
