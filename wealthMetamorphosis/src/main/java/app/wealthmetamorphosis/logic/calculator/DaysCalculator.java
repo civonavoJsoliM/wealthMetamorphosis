@@ -12,7 +12,7 @@ public class DaysCalculator {
     }
 
     public int getNumberOfTradingDaysFromBeginOfYearTillNow() {
-        LocalDate beginOfYear = LocalDate.of(LocalDate.now().getYear(), 01, 01);
+        LocalDate beginOfYear = LocalDate.of(LocalDate.now().getYear(), 1, 1);
         List<LocalDate> daysFromBeginOfYearTillNow = beginOfYear.datesUntil(LocalDate.now().plusDays(1)).toList();
         return (int) daysFromBeginOfYearTillNow.stream().filter(date -> !isDayHoliday(date) && !isDayWeekend(date)).count();
     }

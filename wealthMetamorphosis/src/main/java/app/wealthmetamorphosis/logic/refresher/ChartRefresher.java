@@ -18,7 +18,6 @@ public class RealTimeChartRefresher implements Runnable {
     private String interval;
     private String outputSize;
     private final AreaChart<String, Number> chart;
-    private int i = 0;
 
     public RealTimeChartRefresher(HttpService httpService, AreaChart<String, Number> chart, ObjectMapper objectMapper) {
         this.httpService = httpService;
@@ -41,8 +40,9 @@ public class RealTimeChartRefresher implements Runnable {
     private XYChart.Series<String, Number> getSeries(Stock stock) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         for (int i = stock.getValues().size() - 1; i >= 0; i--) {
-            Number close = BigDecimal.valueOf(Double.parseDouble(stock.getValues().get(i).getClose()));
-            XYChart.Data<String, Number> data = new XYChart.Data<>(stock.getValues().get(i).getDatetime(), close);
+            Number closingPrice = BigDecimal.valueOf(Double.parseDouble(stock.getValues().get(i).getClose()));
+            String date =  stock.getValues().get(i).getDatetime();
+            XYChart.Data<String, Number> data = new XYChart.Data<>(date, closingPrice);
             series.getData().add(data);
         }
         return series;
@@ -59,7 +59,6 @@ public class RealTimeChartRefresher implements Runnable {
             public void run() {
                 chart.getData().clear();
                 chart.getData().add(series);
-                System.out.println("Refresh chart of: " + stockSymbol);
             }
         });
     }
