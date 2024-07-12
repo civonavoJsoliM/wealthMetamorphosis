@@ -1,5 +1,6 @@
 package app.wealthmetamorphosis.logic.controller;
 
+import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.parameters.OrderAvailablePaneChangerParameters;
 import app.wealthmetamorphosis.data.singleton.UserSingleton;
 import app.wealthmetamorphosis.logic.file.FileReader;
@@ -73,7 +74,8 @@ public class ProfileController {
         int counter = 0;
         HttpService service = new HttpService(fileReader, counter);
         scheduledExecutorServices = new ArrayList<>();
-        colors = Files.readAllLines(Path.of("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/Colors.txt"));
+        colors = Files.readAllLines(Path.of(
+                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/Colors.txt")).getPath()));
         profileControllerService = new ProfileControllerService(ownedStockService, service, portfolioWorthLabel,
                 myStocksHBox, scheduledExecutorServices);
 

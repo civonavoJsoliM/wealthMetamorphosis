@@ -1,5 +1,6 @@
 package app.wealthmetamorphosis.logic.service;
 
+import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.logic.file.FileReader;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Objects;
 
 public class HttpService {
     private final FileReader fileReader;
@@ -43,6 +45,7 @@ public class HttpService {
     }
 
     private List<String> getApiKeys() {
-        return fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/ApiKeys.txt");
+        return fileReader.readFromFile(
+                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/ApiKeys.txt")).getPath());
     }
 }

@@ -1,10 +1,12 @@
 package app.wealthmetamorphosis.logic.calculator;
 
+import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.logic.file.FileReader;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DaysCalculator {
     private final FileReader fileReader;
@@ -20,7 +22,8 @@ public class DaysCalculator {
     }
 
     private boolean isDayHoliday(LocalDate date) {
-        List<String> stockMarketHolidays = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/StockMarketHolidays.txt");
+        List<String> stockMarketHolidays = fileReader.readFromFile(
+                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockMarketHolidays.txt")).getPath());
         List<LocalDate> holidays = new ArrayList<>();
         for (String stockMarketHoliday : stockMarketHolidays) {
             LocalDate holiday = LocalDate.parse(stockMarketHoliday);

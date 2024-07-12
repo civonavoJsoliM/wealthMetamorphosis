@@ -1,5 +1,6 @@
 package app.wealthmetamorphosis.logic.service;
 
+import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.data.stock.Stock;
 import app.wealthmetamorphosis.logic.calculator.DaysCalculator;
 import app.wealthmetamorphosis.logic.file.FileReader;
@@ -162,7 +163,8 @@ public class ChartService {
         timeIntervalsHBox = new HBox();
         timeIntervalsHBox.setId("timeIntervalsHBox");
         List<Button> timeIntervalButtons = new ArrayList<>();
-        List<String> timeIntervalsData = fileReader.readFromFile("/Users/ipoce/Desktop/wealthMetamorphosis/TextFiles/TimeIntervals.txt");
+        List<String> timeIntervalsData = fileReader.readFromFile(
+                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/TimeIntervals.txt")).getPath());
         for (String timeInterval : timeIntervalsData) {
             Button timeIntervalButton = getTimeIntervalButton(timeInterval, timeIntervalButtons);
             timeIntervalsHBox.getChildren().add(timeIntervalButton);
