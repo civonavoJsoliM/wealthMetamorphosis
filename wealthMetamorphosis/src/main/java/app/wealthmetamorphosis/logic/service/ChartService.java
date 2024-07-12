@@ -24,6 +24,8 @@ import javafx.scene.shape.Line;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -163,8 +165,13 @@ public class ChartService {
         timeIntervalsHBox = new HBox();
         timeIntervalsHBox.setId("timeIntervalsHBox");
         List<Button> timeIntervalButtons = new ArrayList<>();
-        List<String> timeIntervalsData = fileReader.readFromFile(
-                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/TimeIntervals.txt")).getPath());
+        URI path;
+        try {
+            path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/TimeIntervals.txt")).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        List<String> timeIntervalsData = fileReader.readFromFile(path);
         for (String timeInterval : timeIntervalsData) {
             Button timeIntervalButton = getTimeIntervalButton(timeInterval, timeIntervalButtons);
             timeIntervalsHBox.getChildren().add(timeIntervalButton);

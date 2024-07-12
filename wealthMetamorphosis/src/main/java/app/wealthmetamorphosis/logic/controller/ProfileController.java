@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
@@ -74,8 +76,13 @@ public class ProfileController {
         int counter = 0;
         HttpService service = new HttpService(fileReader, counter);
         scheduledExecutorServices = new ArrayList<>();
-        colors = Files.readAllLines(Path.of(
-                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/Colors.txt")).getPath()));
+        URI path;
+        try {
+            path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/Colors.txt")).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        colors = Files.readAllLines(Path.of(path));
         profileControllerService = new ProfileControllerService(ownedStockService, service, portfolioWorthLabel,
                 myStocksHBox, scheduledExecutorServices);
 

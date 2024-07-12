@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.UnaryOperator;
@@ -92,7 +94,7 @@ public class MainController {
 
 
     @FXML
-    void initialize() {
+    void initialize() throws URISyntaxException {
         stocks = new ArrayList<>();
         ownedStockService = new OwnedStockService();
         int counter = 0;
@@ -106,8 +108,10 @@ public class MainController {
 
         stocksHBoxes = new ArrayList<>();
 
-        List<String> stockSymbols = fileReader.readFromFile(
-                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockSymbols.txt")).getPath());
+        URI path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockSymbols.txt")).toURI();
+        List<String> stockSymbols = fileReader.readFromFile(path);
+        System.out.println(path);
+
         stockSymbols.forEach(stockSymbol -> {
             Button stockButton = getStockButton(stockSymbol);
 

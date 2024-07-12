@@ -3,6 +3,8 @@ package app.wealthmetamorphosis.logic.calculator;
 import app.wealthmetamorphosis.Main;
 import app.wealthmetamorphosis.logic.file.FileReader;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +24,13 @@ public class DaysCalculator {
     }
 
     private boolean isDayHoliday(LocalDate date) {
-        List<String> stockMarketHolidays = fileReader.readFromFile(
-                Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockMarketHolidays.txt")).getPath());
+        URI path;
+        try {
+            path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockMarketHolidays.txt")).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        List<String> stockMarketHolidays = fileReader.readFromFile(path);
         List<LocalDate> holidays = new ArrayList<>();
         for (String stockMarketHoliday : stockMarketHolidays) {
             LocalDate holiday = LocalDate.parse(stockMarketHoliday);
