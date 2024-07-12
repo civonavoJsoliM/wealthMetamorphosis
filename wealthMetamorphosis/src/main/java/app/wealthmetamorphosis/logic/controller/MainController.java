@@ -110,7 +110,7 @@ public class MainController {
 
         URI path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockSymbols.txt")).toURI();
         List<String> stockSymbols = fileReader.readFromFile(path);
-        System.out.println(path);
+        
 
         stockSymbols.forEach(stockSymbol -> {
             Button stockButton = getStockButton(stockSymbol);
