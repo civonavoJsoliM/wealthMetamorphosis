@@ -105,7 +105,7 @@ public class MainController {
         initializeChart();
 
         stocksHBoxes = new ArrayList<>();
-        
+
         List<String> stockSymbols = fileReader.readFromFile(
                 Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockSymbols.txt")).getPath());
         stockSymbols.forEach(stockSymbol -> {
