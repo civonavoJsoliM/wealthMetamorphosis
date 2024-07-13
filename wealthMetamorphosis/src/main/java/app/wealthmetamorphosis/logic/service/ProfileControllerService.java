@@ -88,8 +88,8 @@ public class ProfileControllerService {
         HBox.setMargin(dateLabel, new Insets(0, 0, 0, 10));
         HBox.setMargin(stockLabel, new Insets(0, 0, 0, 6));
         HBox.setMargin(sharesLabel, new Insets(0, 0, 0, 96));
-        HBox.setMargin(buyPriceLabel, new Insets(0, 0, 0, 96));
-        HBox.setMargin(orderTypeLabel, new Insets(0, 0, 0, 86));
+        HBox.setMargin(buyPriceLabel, new Insets(0, 0, 0, 95));
+        HBox.setMargin(orderTypeLabel, new Insets(0, 0, 0, 84));
         return hBox;
     }
 

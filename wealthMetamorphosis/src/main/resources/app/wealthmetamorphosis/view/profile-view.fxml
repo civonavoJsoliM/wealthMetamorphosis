@@ -215,7 +215,7 @@
                      <font>
                         <Font name="Bai Jamjuree Medium" size="17.0" />
                      </font></Label>
-                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" text="Buy Price" textFill="WHITE">
+                  <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="21.0" text="Price" textFill="WHITE">
                      <font>
                         <Font name="Bai Jamjuree Medium" size="17.0" />
                      </font></Label>
@@ -224,7 +224,7 @@
                         <Font name="Bai Jamjuree Medium" size="17.0" />
                      </font>
                      <HBox.margin>
-                        <Insets />
+                        <Insets left="33.0" />
                      </HBox.margin></Label>
                </children>
                <padding>

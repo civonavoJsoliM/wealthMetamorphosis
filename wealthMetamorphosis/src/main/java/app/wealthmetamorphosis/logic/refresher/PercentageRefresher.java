@@ -67,8 +67,10 @@ public class PercentageRefresher implements Runnable {
     }
 
     private double getCurrentStockPrice(Map.Entry<String, Double> entry) throws IOException, InterruptedException {
-        HttpResponse<String> response;
-        response = service.getRealTimeStockPrice(entry.getKey());
+        HttpResponse<String> response = service.getRealTimeStockPrice(entry.getKey());
+        while (response.statusCode() != 200) {
+            response = service.getRealTimeStockPrice(entry.getKey());
+        }
         JSONObject jsonObject = new JSONObject(response.body());
         return Double.parseDouble(jsonObject.getString("price"));
     }

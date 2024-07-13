@@ -24,6 +24,16 @@ public class DaysCalculator {
     }
 
     private boolean isDayHoliday(LocalDate date) {
+        List<String> stockMarketHolidays = getStockMarketHolidays();
+        List<LocalDate> holidays = new ArrayList<>();
+        for (String stockMarketHoliday : stockMarketHolidays) {
+            LocalDate holiday = LocalDate.parse(stockMarketHoliday);
+            holidays.add(holiday);
+        }
+        return holidays.stream().anyMatch(day -> day.isEqual(date));
+    }
+
+    private List<String> getStockMarketHolidays() {
         URI path;
         try {
             path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockMarketHolidays.txt")).toURI();
@@ -31,12 +41,7 @@ public class DaysCalculator {
             throw new RuntimeException(e);
         }
         List<String> stockMarketHolidays = fileReader.readFromFile(path);
-        List<LocalDate> holidays = new ArrayList<>();
-        for (String stockMarketHoliday : stockMarketHolidays) {
-            LocalDate holiday = LocalDate.parse(stockMarketHoliday);
-            holidays.add(holiday);
-        }
-        return holidays.stream().anyMatch(day -> day.isEqual(date));
+        return stockMarketHolidays;
     }
 
     private boolean isDayWeekend(LocalDate date) {

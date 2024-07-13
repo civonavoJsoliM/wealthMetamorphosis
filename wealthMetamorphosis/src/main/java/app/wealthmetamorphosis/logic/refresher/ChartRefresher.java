@@ -30,6 +30,9 @@ public class ChartRefresher implements Runnable {
     public void run() {
         try {
             HttpResponse<String> response = httpService.getStock(stockSymbol, interval, outputSize);
+            while (response.statusCode() != 200) {
+                response = httpService.getStock(stockSymbol, interval, outputSize);
+            }
             Stock stock = getStock(response);
             XYChart.Series<String, Number> series = getSeries(stock);
             setNewChartData(series);
