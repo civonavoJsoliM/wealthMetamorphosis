@@ -50,6 +50,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES ('0299669c-5dee-4088-b71c-b777322536ad','SMCI',907.04999,20,'SELL','2024-07-13 06:40:37','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('03af787f-1a78-4e84-a973-ba90a10b3c81','SMCI',907.04999,20,'BUY','2024-07-13 06:40:30','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('0428e950-f144-4098-af01-3246bdea94ae','PEP',166.52,100,'SELL','2024-07-13 06:26:25','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('1d77b534-185f-4cfc-b1d1-cca38df49fa5','AAPL',230.2,2,'BUY','2024-07-13 06:40:05','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('533ecd3a-4c58-452a-8574-efd60a14b3df','AAPL',230.2,2,'SELL','2024-07-13 06:40:11','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('71cac38c-3645-45b4-8f3c-67ab44dfb806','CSCO',47.48,1000,'BUY','2024-07-13 06:26:30','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3'),('e5619820-dcec-4c56-9cc5-c1ef4f81fe46','PEP',166.52,100,'BUY','2024-07-13 06:26:21','ebcd2d26-ca58-4c4d-b84f-2a669290fdb3');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,12 +63,13 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `user_id` varchar(255) NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `registered` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `balance` double NOT NULL,
   PRIMARY KEY (`user_id`),
-  UNIQUE KEY `user_name` (`username`)
+  UNIQUE KEY `user_name` (`username`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -77,6 +79,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES ('1b34840b-a223-4f2b-acd9-66fa7fb8e01c','Mike','6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b','2024-07-13 06:27:27',100000),('ebcd2d26-ca58-4c4d-b84f-2a669290fdb3','iwubGIOÖÄERBWGIBNROWEIÄGNOIERWNGIORENOGIRNEIOBNouirbnoibhnioenghioernbhioernoirnber0iopbneroinboeirnboperinbopiernoipbner890gh3490g8bngioe5rnbhoienoie5hbnoei5nboeirnboerinb98345hbioe5rnbioer5nboienroibneiornbiopernbiopärnepioäbnpäwernbpäoinäpioenprobnwero','6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b','2024-07-13 06:24:17',52520);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -89,4 +92,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-12 17:13:10
+-- Dump completed on 2024-07-13  9:06:14
