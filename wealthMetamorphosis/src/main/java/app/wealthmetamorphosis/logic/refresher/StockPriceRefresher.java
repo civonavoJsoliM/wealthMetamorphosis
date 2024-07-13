@@ -7,6 +7,8 @@ import app.wealthmetamorphosis.logic.colorChanger.GreenColorChanger;
 import app.wealthmetamorphosis.logic.colorChanger.RedColorChanger;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
@@ -21,15 +23,25 @@ public class StockPriceRefresher implements Runnable {
     private final StockPriceRefresherParameters sprp;
     private Label priceLabel;
     private String stockSymbol;
+    private Alert alert;
+    private final Button buyButton;
+    private final Button sellButton;
+    private final Button sellAllButton;
 
-    public StockPriceRefresher(StockPriceRefresherParameters sprp) {
+    public StockPriceRefresher(StockPriceRefresherParameters sprp, Button buyButton, Button sellButton, Button sellAllButton) {
         this.sprp = sprp;
+        this.buyButton = buyButton;
+        this.sellButton = sellButton;
+        this.sellAllButton = sellAllButton;
     }
 
     @Override
     public void run() {
         try {
             HttpResponse<String> response = sprp.httpService().getRealTimeStockPrice(stockSymbol);
+            while (response.statusCode() != 200) {
+                response = sprp.httpService().getRealTimeStockPrice(stockSymbol);
+            }
             double newCurrentPrice = getPriceFromJSONObject(response);
             setNewPrice(newCurrentPrice);
         } catch (IOException | InterruptedException e) {
@@ -48,9 +60,9 @@ public class StockPriceRefresher implements Runnable {
             public void run() {
                 if (!priceLabel.getText().matches("\\s")) {
                     changeCurrentPriceColor(newCurrentPrice, priceLabel);
-
                 }
                 priceLabel.setText(newCurrentPrice + "$");
+                enableTradingButtons();
                 changeTextFillBack();
 
                 if (!sprp.sellSharesTextField().getText().isBlank()) {
@@ -61,8 +73,17 @@ public class StockPriceRefresher implements Runnable {
                 if (!sprp.buySharesTextField().getText().isBlank()) {
                     setTotalCostLabelText(newCurrentPrice);
                 }
+                if (alert != null) {
+                    alert.close();
+                }
             }
         });
+    }
+
+    private void enableTradingButtons() {
+        buyButton.setDisable(false);
+        sellButton.setDisable(false);
+        sellAllButton.setDisable(false);
     }
 
     private void setTotalLabelText(double newCurrentPrice) {
@@ -124,5 +145,9 @@ public class StockPriceRefresher implements Runnable {
 
     public void setStockSymbol(String stockSymbol) {
         this.stockSymbol = stockSymbol;
+    }
+
+    public void setAlert(Alert alert) {
+        this.alert = alert;
     }
 }

@@ -20,7 +20,7 @@ public class Validator {
 
     public UnaryOperator<TextFormatter.Change> validateInput() {
         return input -> {
-            if (input.getText().matches("\\s")) {
+            if (input.getText().matches("\\s") || input.getRangeEnd() > 254) {
                 input.setText("");
             }
             return input;

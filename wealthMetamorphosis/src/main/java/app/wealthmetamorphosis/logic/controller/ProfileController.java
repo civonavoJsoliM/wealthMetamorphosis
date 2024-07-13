@@ -76,13 +76,7 @@ public class ProfileController {
         int counter = 0;
         HttpService service = new HttpService(fileReader, counter);
         scheduledExecutorServices = new ArrayList<>();
-        URI path;
-        try {
-            path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/Colors.txt")).toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        colors = Files.readAllLines(Path.of(path));
+        getColors();
         profileControllerService = new ProfileControllerService(ownedStockService, service, portfolioWorthLabel,
                 myStocksHBox, scheduledExecutorServices);
 
@@ -91,6 +85,16 @@ public class ProfileController {
         changePane();
 
         setProfileStage();
+    }
+
+    private void getColors() throws IOException {
+        URI path;
+        try {
+            path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/Colors.txt")).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        colors = Files.readAllLines(Path.of(path));
     }
 
     private void changePane() {

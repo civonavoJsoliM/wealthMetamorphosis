@@ -43,7 +43,7 @@ public class ChartService {
     private final FileReader fileReader;
     private final Label priceLabel;
     private final Label stockLabel;
-    private Label chartDataLabel;
+    private final Label chartDataLabel;
     private Line line;
     private NumberAxis yAxis;
     private CategoryAxis xAxis;
@@ -53,8 +53,7 @@ public class ChartService {
     private final VBox placeholderVBox;
     private final VBox chartsVBox;
 
-    public ChartService(ScheduledExecutorService chartScheduler, StockPriceRefresher stockPriceRefresher, FileReader fileReader, Label priceLabel, Label stockLabel, HttpService httpService, VBox placeholderVBox, VBox chartsVBox, Label chartDataLabel) {
-        this.chartScheduler = chartScheduler;
+    public ChartService(StockPriceRefresher stockPriceRefresher, FileReader fileReader, Label priceLabel, Label stockLabel, HttpService httpService, VBox placeholderVBox, VBox chartsVBox, Label chartDataLabel) {
         this.stockPriceRefresher = stockPriceRefresher;
         this.fileReader = fileReader;
         this.priceLabel = priceLabel;
@@ -116,6 +115,9 @@ public class ChartService {
 
     private Stock getStock(String symbol, String interval, String outputSize) throws IOException, InterruptedException {
         HttpResponse<String> response = httpService.getStock(symbol, interval, outputSize);
+        while (response.statusCode() != 200) {
+            response = httpService.getStock(symbol, interval, outputSize);
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(response.body(), Stock.class);
     }
@@ -155,7 +157,6 @@ public class ChartService {
     }
 
     public void getChartDataLabel() {
-        chartDataLabel = new Label();
         chartDataLabel.setId("chartDataLabel");
         chartDataLabel.setVisible(false);
     }
@@ -165,6 +166,15 @@ public class ChartService {
         timeIntervalsHBox = new HBox();
         timeIntervalsHBox.setId("timeIntervalsHBox");
         List<Button> timeIntervalButtons = new ArrayList<>();
+        List<String> timeIntervalsData = getTimeIntervalsData();
+        for (String timeInterval : timeIntervalsData) {
+            Button timeIntervalButton = getTimeIntervalButton(timeInterval, timeIntervalButtons);
+            timeIntervalsHBox.getChildren().add(timeIntervalButton);
+        }
+        return timeIntervalsHBox;
+    }
+
+    private List<String> getTimeIntervalsData() {
         URI path;
         try {
             path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/TimeIntervals.txt")).toURI();
@@ -172,11 +182,7 @@ public class ChartService {
             throw new RuntimeException(e);
         }
         List<String> timeIntervalsData = fileReader.readFromFile(path);
-        for (String timeInterval : timeIntervalsData) {
-            Button timeIntervalButton = getTimeIntervalButton(timeInterval, timeIntervalButtons);
-            timeIntervalsHBox.getChildren().add(timeIntervalButton);
-        }
-        return timeIntervalsHBox;
+        return timeIntervalsData;
     }
 
     private Button getTimeIntervalButton(String timeInterval, List<Button> timeIntervalButtons) {

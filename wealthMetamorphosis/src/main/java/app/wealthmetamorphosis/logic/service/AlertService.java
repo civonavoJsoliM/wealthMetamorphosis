@@ -8,9 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.util.Objects;
 
@@ -18,13 +16,11 @@ public class AlertService {
     private final Label stockLabel;
     private final OwnedStockService ownedStockService;
     private final double price;
-    private final Stage stage;
 
-    public AlertService(Label stockLabel, OwnedStockService ownedStockService, double price, Stage stage) {
+    public AlertService(Label stockLabel, OwnedStockService ownedStockService, double price) {
         this.stockLabel = stockLabel;
         this.ownedStockService = ownedStockService;
         this.price = price;
-        this.stage = stage;
     }
 
     public Alert getAlert() {
@@ -40,10 +36,6 @@ public class AlertService {
         setDialogPaneContent(alert, hBox);
 
         alert.setTitle("CAUTION");
-        alert.initModality(Modality.WINDOW_MODAL);
-        alert.initOwner(stage);
-        alert.initStyle(StageStyle.UTILITY);
-        alert.showAndWait();
         return alert;
     }
 

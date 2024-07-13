@@ -16,6 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `wealthMetamorphosis`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `wealthMetamorphosis` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `wealthMetamorphosis`;
+
+--
 -- Table structure for table `orders`
 --
 
@@ -81,4 +89,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-08 16:29:02
+-- Dump completed on 2024-07-12 17:13:10

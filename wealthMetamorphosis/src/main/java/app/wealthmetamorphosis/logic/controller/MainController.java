@@ -18,7 +18,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.AreaChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.UnaryOperator;
 
 public class MainController {
@@ -75,6 +73,12 @@ public class MainController {
     private Label totalLabel;
     @FXML
     private Label profitLossLabel;
+    @FXML
+    private Button buyButton;
+    @FXML
+    private Button sellButton;
+    @FXML
+    private Button sellAllButton;
 
     private Stage stage;
     private List<Stock> stocks;
@@ -83,14 +87,11 @@ public class MainController {
     private Validator validator;
     private HttpService httpService;
     private FileReader fileReader;
-    private AreaChart<String, Number> chart;
-    private ScheduledExecutorService stockPriceScheduler;
-    private ScheduledExecutorService chartScheduler;
-    private Label chartDataLabel;
     private Button activeStockButton;
     private List<HBox> stocksHBoxes;
     private OwnedStockService ownedStockService;
     private ChartService chartService;
+    private StockPriceRefresher stockPriceRefresher;
 
 
     @FXML
@@ -110,7 +111,7 @@ public class MainController {
 
         URI path = Objects.requireNonNull(Main.class.getResource("/app/wealthMetamorphosis/files/StockSymbols.txt")).toURI();
         List<String> stockSymbols = fileReader.readFromFile(path);
-        
+
 
         stockSymbols.forEach(stockSymbol -> {
             Button stockButton = getStockButton(stockSymbol);
@@ -130,11 +131,12 @@ public class MainController {
         StockPriceRefresherParameters stockPriceRefresherParameters = new StockPriceRefresherParameters(httpService, ownedStockService,
                 sellSharesTextField, buySharesTextField, profitLossLabel, totalCostLabel, totalLabel);
 
-        StockPriceRefresher stockPriceRefresher = new StockPriceRefresher(stockPriceRefresherParameters);
+        stockPriceRefresher = new StockPriceRefresher(stockPriceRefresherParameters, buyButton, sellButton, sellAllButton);
 
         activeStockButton = new Button();
+        Label chartDataLabel = new Label();
 
-        chartService = new ChartService(chartScheduler, stockPriceRefresher, fileReader, priceLabel, stockLabel, httpService,
+        chartService = new ChartService(stockPriceRefresher, fileReader, priceLabel, stockLabel, httpService,
                 placeholderVBox, chartsVBox, chartDataLabel);
 
         chartService.getChart();
@@ -150,7 +152,10 @@ public class MainController {
         stockButton.setPrefWidth(stocksVBox.getPrefWidth());
         stockButton.setOnMouseClicked(event -> {
 
+
             if (!activeStockButton.equals(stockButton)) {
+                disableTradingButtons();
+
                 activeStockButton = stockButton;
                 stockLabel.setText(stockSymbol);
 
@@ -188,6 +193,14 @@ public class MainController {
             }
         });
         return stockButton;
+    }
+
+    private void disableTradingButtons() {
+
+        buyButton.setDisable(true);
+        sellButton.setDisable(true);
+        sellAllButton.setDisable(true);
+
     }
 
     private void setStockSymbolAndPriceVBoxVisibility() {
@@ -286,6 +299,7 @@ public class MainController {
                     buyVBox.setVisible(true);
                     setSellVBoxVisibility(activeStockButton.getText());
                 }
+                clearTextFieldsAndWarningLabels();
             }
         } else {
             fxmlLoader = new FXMLLoader(Main.class.getResource("/app/wealthmetamorphosis/view/profile-view.fxml"));
@@ -362,7 +376,7 @@ public class MainController {
 
     @FXML
     void enteredSharesToBuy() {
-        if (!buySharesTextField.getText().isBlank()) {
+        if (!buySharesTextField.getText().isBlank() && !priceLabel.getText().isBlank()) {
             double price = getPrice();
             double shares = Double.parseDouble(buySharesTextField.getText());
 
@@ -407,8 +421,8 @@ public class MainController {
 
     @FXML
     void enteredSharesToSell() {
-        double price = getPrice();
-        if (!sellSharesTextField.getText().isBlank()) {
+        if (!sellSharesTextField.getText().isBlank() && !priceLabel.getText().isBlank()) {
+            double price = getPrice();
             double total = Math.round(price * Double.parseDouble(sellSharesTextField.getText()) * 100.0) / 100.0;
             totalLabel.setText(total + "$");
 
@@ -470,8 +484,8 @@ public class MainController {
 
     @FXML
     void onSellAllButtonClicked() {
-        AlertService sellAllAlert = new AlertService(stockLabel, ownedStockService, getPrice(), stage);
-        Alert alert = sellAllAlert.getAlert();
+        AlertService sellAllAlert = new AlertService(stockLabel, ownedStockService, getPrice());
+        Alert alert = getAlert(sellAllAlert);
         ButtonType result = alert.getResult();
         if (result.equals(ButtonType.OK)) {
 
@@ -483,6 +497,16 @@ public class MainController {
             clearTextFieldsAndWarningLabels();
 
         }
+    }
+
+    private Alert getAlert(AlertService sellAllAlert) {
+        Alert alert = sellAllAlert.getAlert();
+        stockPriceRefresher.setAlert(alert);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initOwner(stage);
+        alert.initStyle(StageStyle.UTILITY);
+        alert.showAndWait();
+        return alert;
     }
 
     private void setSellVBoxAndStockDotVisibility(Stock stock, double ownedShares) {
