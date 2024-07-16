@@ -440,11 +440,26 @@ public class MainController {
 
         double ownedShares = ownedStockService.getSharesFromCertainStock(user, stockSymbol);
         double totalInvestedInStock = ownedStockService.getInvestedInStock(user, stockSymbol);
-        double percentage = ownedStockService.getPercentage(totalInvestedInStock, price, ownedShares);
+        double percentage = getPercentage(totalInvestedInStock, price, ownedShares);
         double sharesToSell = Double.parseDouble(sellSharesTextField.getText());
         double amountToSell = price * sharesToSell;
 
-        return Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0;
+        return profitLoss(percentage, amountToSell);
+    }
+
+    private double getPercentage(double totalInvestedInStock, double price, double ownedShares) {
+        double percentage = ((100 / totalInvestedInStock) * (price * ownedShares)) - 100;
+        percentage = (percentage + 100) / 100;
+        return percentage;
+    }
+
+    private double profitLoss(double percentage, double amountToSell) {
+        if (percentage < 0) {
+            percentage *= -1;
+            return (Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0) * -1;
+        } else {
+            return Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0;
+        }
     }
 
     private double getPrice() {

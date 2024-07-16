@@ -87,7 +87,7 @@ public class PercentageRefresher implements Runnable {
 
                     for (int i = 0; i < profitLossLabels.size(); i++) {
                         if (!profitLossLabels.get(i).getText().isBlank()) {
-                            changePercentageColor(i, newPercentages);
+                            changePercentageColor(i, newPercentages.get(i));
                         }
                         profitLossLabels.get(i).setText(newPercentages.get(i) + "%");
                     }
@@ -110,10 +110,10 @@ public class PercentageRefresher implements Runnable {
         colorTransition.playFromStart();
     }
 
-    private void changePercentageColor(int i, List<Double> newPercentages) {
+    private void changePercentageColor(int i, Double newPercentages) {
         String oldPercentageString = profitLossLabels.get(i).getText().substring(0, profitLossLabels.get(i).getText().length() - 1).replace(",", ".");
         double oldPercentage = Double.parseDouble(oldPercentageString);
-        double newPercentage = newPercentages.get(i);
+        double newPercentage = newPercentages;
         Label profitLossLabel = profitLossLabels.get(i);
 
         ColorChanger greenColorChanger = new GreenColorChanger(oldPercentage, newPercentage, profitLossLabel);
