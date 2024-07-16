@@ -99,12 +99,29 @@ public class StockPriceRefresher implements Runnable {
     private void setProfitLossValue(double newPrice) {
         double ownedShares = sprp.ownedStockService().getSharesFromCertainStock(UserSingleton.getInstance(), stockSymbol);
         double totalInvestedInStock = sprp.ownedStockService().getInvestedInStock(UserSingleton.getInstance(), stockSymbol);
-        double percentage = sprp.ownedStockService().getPercentage(totalInvestedInStock, newPrice, ownedShares);
+        double percentage = getPercentage(newPrice, totalInvestedInStock, ownedShares);
         double sharesToSell = Double.parseDouble(sprp.sellSharesTextField().getText());
         double amountToSell = newPrice * sharesToSell;
-        double profitLoss = Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0;
+        double profitLoss = getProfitLoss(percentage, amountToSell);
 
         setProfitLossLabel(profitLoss);
+    }
+
+    private double getProfitLoss(double percentage, double amountToSell) {
+        double profitLoss;
+        if (percentage < 0) {
+            percentage *= -1;
+            profitLoss = (Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0) * -1;
+        } else {
+            profitLoss = Math.round((amountToSell - (amountToSell / percentage)) * 100.0) / 100.0;
+        }
+        return profitLoss;
+    }
+
+    private double getPercentage(double newPrice, double totalInvestedInStock, double ownedShares) {
+        double percentage = ((100 / totalInvestedInStock) * (newPrice * ownedShares)) - 100;
+        percentage = (percentage + 100) / 100;
+        return percentage;
     }
 
 

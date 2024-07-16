@@ -36,9 +36,7 @@ public class OwnedStockService {
     }
 
     public double getInvestedInStock(User user, String stockSymbol) {
-        List<Order> orders = user.getOrders().stream()
-                .filter(order -> order.getStockSymbol().equals(stockSymbol))
-                .toList();
+        List<Order> orders = getOrders(user, stockSymbol);
 
         double shares = 0;
         double investedInStock = 0;
@@ -59,6 +57,12 @@ public class OwnedStockService {
             }
         }
         return investedInStock;
+    }
+
+    private List<Order> getOrders(User user, String stockSymbol) {
+        return user.getOrders().stream()
+                .filter(order -> order.getStockSymbol().equals(stockSymbol))
+                .toList();
     }
 
     public double getPercentage(double investedInStock, double stockPrice, double ownedShares) {
