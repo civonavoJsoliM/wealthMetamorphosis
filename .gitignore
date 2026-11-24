@@ -28,3 +28,11 @@ hs_err_pid*
 replay_pid*
 
 # End of https://www.toptal.com/developers/gitignore/api/java
+
+### Secrets ###
+ApiKeys.txt
+*.env
+.env
+
+### macOS ###
+.DS_Store
